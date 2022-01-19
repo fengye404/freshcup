@@ -9,7 +9,7 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>sast</groupId>
-    <artifactId>sast</artifactId>
+    <artifactId>sast-freshcup</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>SAST-FreshCup</name>
     <description>SAST-FreshCup</description>
@@ -54,19 +54,58 @@
             <artifactId>mybatis-plus-boot-starter</artifactId>
             <version>3.4.3.3</version>
         </dependency>
+
+        <dependency>
+            <groupId>com.github.penggle</groupId>
+            <artifactId>kaptcha</artifactId>
+            <version>2.3.2</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>1.2.73</version>
+        </dependency>
+
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-all</artifactId>
+            <version>5.7.19</version>
+        </dependency>
+        <dependency>
+            <groupId>com.auth0</groupId>
+            <artifactId>java-jwt</artifactId>
+            <version>3.18.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-aop</artifactId>
+        </dependency>
     </dependencies>
 
-<!--    <profiles>-->
-<!--        <profile>-->
-<!--            <id>dev</id>-->
-<!--            <activation>-->
-<!--                <activeByDefault>true</activeByDefault>-->
-<!--            </activation>-->
-<!--            <properties>-->
-<!--                <build.profile.id>dev</build.profile.id>-->
-<!--            </properties>-->
-<!--        </profile>-->
-<!--    </profiles>-->
+    <profiles>
+        <profile>
+            <id>dev</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <build.profile.id>dev</build.profile.id>
+            </properties>
+        </profile>
+        <profile>
+            <id>fengye404</id>
+            <properties>
+                <build.profile.id>fengye404</build.profile.id>
+            </properties>
+        </profile>
+        <profile>
+            <id>prod</id>
+            <properties>
+                <build.profile.id>prod</build.profile.id>
+            </properties>
+        </profile>
+    </profiles>
 
     <build>
         <plugins>
