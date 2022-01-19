@@ -1,6 +1,9 @@
 package sast.freshcup.entity;
 
 import java.io.Serializable;
+
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,6 +23,7 @@ public class Account implements Serializable {
     /**
      * 用户UID
      */
+    @TableId(type = IdType.AUTO)
     private Long uid;
 
     
@@ -30,8 +34,9 @@ public class Account implements Serializable {
 
     /**
      * student/admin/superadmin
+     * 0,1,2
      */
-    private String role;
+    private Integer role;
 
 }
 

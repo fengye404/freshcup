@@ -1,6 +1,9 @@
 package sast.freshcup.entity;
 
 import java.io.Serializable;
+
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,7 +20,7 @@ import lombok.NoArgsConstructor;
 public class AccountContestManager implements Serializable {
     private static final long serialVersionUID = 397178340921898996L;
 
-    
+    @TableId(type = IdType.AUTO)
     private Long id;
 
     /**

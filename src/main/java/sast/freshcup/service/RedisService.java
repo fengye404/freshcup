@@ -34,7 +34,7 @@ public class RedisService {
      * @param key  键
      * @param time 时间(秒)
      */
-    public boolean expire(String key, long time) {
+    public Boolean expire(String key, long time) {
         try {
             if (time > 0) {
                 redisTemplate.expire(prefix + key, time, TimeUnit.SECONDS);
@@ -52,7 +52,7 @@ public class RedisService {
      * @param key  键
      * @param time 时间(秒)
      */
-    public boolean expire(String key, long time, TimeUnit timeUnit) {
+    public Boolean expire(String key, long time, TimeUnit timeUnit) {
         try {
             if (time > 0) {
                 redisTemplate.expire(prefix + key, time, timeUnit);
@@ -70,7 +70,7 @@ public class RedisService {
      * @param key 键 不能为null
      * @return 时间(秒) 返回0代表为永久有效
      */
-    public long getExpire(String key) {
+    public Long getExpire(String key) {
         return redisTemplate.getExpire(prefix + key, TimeUnit.SECONDS);
     }
 
@@ -81,7 +81,7 @@ public class RedisService {
      * @param key 键
      * @return true 存在 false不存在
      */
-    public boolean hasKey(String key) {
+    public Boolean hasKey(String key) {
         try {
             return redisTemplate.hasKey(prefix + key);
         } catch (Exception e) {
@@ -159,7 +159,7 @@ public class RedisService {
      * @return true成功 false失败
      */
 
-    public boolean set(String key, Object value) {
+    public Boolean set(String key, Object value) {
         try {
             redisTemplate.opsForValue().set(prefix + key, value);
             return true;

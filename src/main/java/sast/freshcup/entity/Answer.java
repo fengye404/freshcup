@@ -1,6 +1,10 @@
 package sast.freshcup.entity;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
+
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,6 +24,7 @@ public class Answer implements Serializable {
     /**
      * 答案ID
      */
+    @TableId(type = IdType.AUTO)
     private Long id;
 
     /**
@@ -41,6 +46,11 @@ public class Answer implements Serializable {
      * 答案
      */
     private String content;
+
+    /**
+     * 更新时间
+     */
+    private LocalDateTime updateTime;
 
 }
 

@@ -1,7 +1,11 @@
 package sast.freshcup.entity;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.io.Serializable;
+
+import com.baomidou.mybatisplus.annotation.IdType;
+import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -21,7 +25,8 @@ public class Contest implements Serializable {
     /**
      * 比赛ID
      */
-    private Long cid;
+    @TableId(type = IdType.AUTO)
+    private Long id;
 
     /**
      * 比赛名
@@ -31,12 +36,17 @@ public class Contest implements Serializable {
     /**
      * 开始时间
      */
-    private Date start;
+    private LocalDateTime start;
 
     /**
      * 结束时间
      */
-    private Date end;
+    private LocalDateTime end;
+
+    /**
+     * 比赛描述
+     */
+    private String description;
 
 }
 

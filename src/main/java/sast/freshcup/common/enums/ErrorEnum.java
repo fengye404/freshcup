@@ -6,7 +6,11 @@ package sast.freshcup.common.enums;
  **/
 public enum ErrorEnum {
 
-    COMMON_ERROR(5000, "错误")
+    COMMON_ERROR(5000, "错误"),
+
+    TOKEN_ERROR(5001,"TOKEN错误"),
+
+    NO_LOGIN(5002,"没有登录")
 
 
 
