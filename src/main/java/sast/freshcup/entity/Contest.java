@@ -26,7 +26,7 @@ public class Contest implements Serializable {
      * 比赛ID
      */
     @TableId(type = IdType.AUTO)
-    private Long id;
+    private Long cid;
 
     /**
      * 比赛名
