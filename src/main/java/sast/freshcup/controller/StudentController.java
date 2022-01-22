@@ -1,10 +1,16 @@
 package sast.freshcup.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import sast.freshcup.annotation.AuthHandle;
 import sast.freshcup.common.enums.AuthEnum;
+import sast.freshcup.pojo.ContestVO;
+import sast.freshcup.service.StudentService;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * @author: 風楪fy
@@ -13,9 +19,14 @@ import sast.freshcup.common.enums.AuthEnum;
 @RequestMapping("/student")
 @RestController
 public class StudentController {
+
+    @Autowired
+    private StudentService studentService;
+
     @AuthHandle(AuthEnum.STUDENT)
     @GetMapping("/contestList")
-    public void getContestList() {
-
+    public Map<String,Object> getContestList(Integer pageNum, Integer pageSize) {
+        List<ContestVO> contestList = studentService.getContestList(pageNum, pageSize);
+        return null;
     }
 }
