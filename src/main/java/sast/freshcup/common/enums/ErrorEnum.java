@@ -10,9 +10,11 @@ public enum ErrorEnum {
 
     COMMON_ERROR(5000, "错误"),
 
-    TOKEN_ERROR(5001, "TOKEN错误"),
+    TOKEN_ERROR(5001,"TOKEN错误"),
 
-    NO_LOGIN(5002, "没有登录"),
+    NO_LOGIN(5002,"没有登录"),
+
+    WEBSOCKEY_ERROR(5003,"websocket异常"),
 
     ANSWER_JUDGE(6000, "题目已批改"),
 

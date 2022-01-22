@@ -1,5 +1,6 @@
 package sast.freshcup.common.enums;
 
+import lombok.Data;
 import sast.freshcup.entity.Account;
 
 import java.util.HashMap;
@@ -28,6 +29,14 @@ public enum AuthEnum {
     AuthEnum(String role, Integer code) {
         this.role = role;
         this.code = code;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public Integer getCode() {
+        return code;
     }
 
     public static Boolean checkAuth(Account account, AuthEnum needRole) {
