@@ -6,15 +6,17 @@ package sast.freshcup.common.enums;
  **/
 public enum ErrorEnum {
 
+    PARAMS_LOSS(1000, "传参缺失"),
+
     COMMON_ERROR(5000, "错误"),
 
-    TOKEN_ERROR(5001,"TOKEN错误"),
+    TOKEN_ERROR(5001, "TOKEN错误"),
 
-    NO_LOGIN(5002,"没有登录")
+    NO_LOGIN(5002, "没有登录"),
 
+    ANSWER_JUDGE(6000, "题目已批改"),
 
-
-    ;
+    PROBLEM_NOT_EXIST(6001, "题目不存在");
 
 
     private Integer errCode;
