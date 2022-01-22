@@ -1,7 +1,6 @@
 package sast.freshcup.entity;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.io.Serializable;
 
 import com.baomidou.mybatisplus.annotation.IdType;
@@ -26,7 +25,7 @@ public class Contest implements Serializable {
      * 比赛ID
      */
     @TableId(type = IdType.AUTO)
-    private Long cid;
+    private Long id;
 
     /**
      * 比赛名
