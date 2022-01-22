@@ -49,7 +49,7 @@ public class Problem implements Serializable {
     /**
      * 题目内容
      */
-    private String desc;
+    private String description;
 
     /**
      * A
@@ -79,7 +79,7 @@ public class Problem implements Serializable {
     /**
      * 在一个比赛中出现的题号
      */
-    private Integer order;
+    private Integer orderId;
 
     /**
      * 图片Base64，用"#"拼接
