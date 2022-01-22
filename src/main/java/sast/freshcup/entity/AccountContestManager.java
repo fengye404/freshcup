@@ -18,6 +18,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AccountContestManager implements Serializable {
+
     private static final long serialVersionUID = 397178340921898996L;
 
     @TableId(type = IdType.AUTO)

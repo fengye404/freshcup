@@ -10,10 +10,14 @@ public enum ErrorEnum {
 
     TOKEN_ERROR(5001,"TOKEN错误"),
 
-    NO_LOGIN(5002,"没有登录")
+    NO_LOGIN(5002,"没有登录"),
 
+    NO_USER(6000, "没有用户"),
 
+    NO_PROBLEM(7000, "没有问题"),
 
+    NO_CONTEST(8000, "没有比赛"),
+    DATE_ERROR(8001, "时间设置错误")
     ;
 
 

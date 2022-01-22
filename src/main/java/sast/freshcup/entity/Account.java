@@ -8,6 +8,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotNull;
+
 /**
  * (Account)实体类
  *
@@ -18,6 +20,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Account implements Serializable {
+
     private static final long serialVersionUID = 532960928738689155L;
 
     /**
@@ -26,10 +29,10 @@ public class Account implements Serializable {
     @TableId(type = IdType.AUTO)
     private Long uid;
 
-    
+    @NotNull(message = "用户名不能为 null")
     private String username;
 
-    
+    @NotNull(message = "密码不能为 null")
     private String password;
 
     /**
@@ -38,5 +41,10 @@ public class Account implements Serializable {
      */
     private Integer role;
 
+    public Account(String username, String password, Integer role) {
+        this.username = username;
+        this.password = password;
+        this.role = role;
+    }
 }
 

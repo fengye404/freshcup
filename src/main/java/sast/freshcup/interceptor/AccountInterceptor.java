@@ -2,6 +2,7 @@ package sast.freshcup.interceptor;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
 import sast.freshcup.common.enums.ErrorEnum;
 import sast.freshcup.entity.Account;
@@ -18,17 +19,24 @@ import javax.servlet.http.HttpServletResponse;
  **/
 @Component
 public class AccountInterceptor implements HandlerInterceptor {
-    @Autowired
-    private JwtUtil jwtUtil;
-    @Autowired
-    private AccountMapper accountMapper;
+
+    private final JwtUtil jwtUtil;
+
+    private final AccountMapper accountMapper;
 
     public static ThreadLocal<Account> accountHolder = new ThreadLocal<>();
 
+    public AccountInterceptor(JwtUtil jwtUtil, AccountMapper accountMapper) {
+        this.jwtUtil = jwtUtil;
+        this.accountMapper = accountMapper;
+    }
+
     @Override
-    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+    public boolean preHandle(HttpServletRequest request,
+                             HttpServletResponse response, Object handler)
+            throws Exception {
         String token = request.getHeader("token");
-        if (token == null || token.equals("")) {
+        if (!StringUtils.hasLength(token)) {
             throw new LocalRunTimeException(ErrorEnum.TOKEN_ERROR);
         }
         Account account = jwtUtil.getAccount(token);
@@ -50,7 +58,9 @@ public class AccountInterceptor implements HandlerInterceptor {
     }
 
     @Override
-    public void afterCompletion(HttpServletRequest request, HttpServletResponse response, Object handler, Exception ex) throws Exception {
+    public void afterCompletion(HttpServletRequest request,
+                                HttpServletResponse response, Object handler, Exception ex)
+            throws Exception {
         accountHolder.remove();
     }
 }

@@ -1,5 +1,6 @@
 package sast.freshcup.common.enums;
 
+import lombok.Getter;
 import sast.freshcup.entity.Account;
 
 import java.util.HashMap;
@@ -31,10 +32,6 @@ public enum AuthEnum {
     }
 
     public static Boolean checkAuth(Account account, AuthEnum needRole) {
-        if (needRole.code.equals(account.getRole())) {
-            return true;
-        } else {
-            return false;
-        }
+        return needRole.code.equals(account.getRole());
     }
 }

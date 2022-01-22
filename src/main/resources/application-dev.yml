@@ -14,3 +14,7 @@ server:
 logging:
   level:
     sast.freshcup.mapper: debug
+
+mybatis-plus:
+  configuration:
+    map-underscore-to-camel-case: true

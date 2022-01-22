@@ -1,6 +1,5 @@
 package sast.freshcup.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -12,14 +11,18 @@ import sast.freshcup.interceptor.AccountInterceptor;
  **/
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
-    @Autowired
-    private AccountInterceptor accountInterceptor;
+
+    private final AccountInterceptor accountInterceptor;
+
+    public WebConfig(AccountInterceptor accountInterceptor) {
+        this.accountInterceptor = accountInterceptor;
+    }
 
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(accountInterceptor)
                 .addPathPatterns("/**")
-                .excludePathPatterns("/login","/getValidateCode");
+                .excludePathPatterns("/login", "/getValidateCode");
     }
 }
