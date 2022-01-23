@@ -18,6 +18,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Problem implements Serializable {
+
     private static final long serialVersionUID = 298970394659612485L;
 
     /**
@@ -30,6 +31,11 @@ public class Problem implements Serializable {
      * 比赛ID
      */
     private Long contestId;
+
+    /**
+     * 比赛名称
+     */
+    private String contestName;
 
     /**
      * 出题人UID

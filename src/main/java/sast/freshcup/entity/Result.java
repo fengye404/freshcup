@@ -18,6 +18,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Result implements Serializable {
+
     private static final long serialVersionUID = -30626510851709404L;
 
     @TableId(type = IdType.AUTO)

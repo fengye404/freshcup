@@ -16,9 +16,18 @@ public enum ErrorEnum {
 
     WEBSOCKEY_ERROR(5003,"websocket异常"),
 
+    NO_USER(6000, "没有用户"),
+
     ANSWER_JUDGE(6000, "题目已批改"),
 
-    PROBLEM_NOT_EXIST(6001, "题目不存在");
+    PROBLEM_NOT_EXIST(6001, "题目不存在"),
+
+    NO_PROBLEM(7000, "没有问题"),
+
+    NO_CONTEST(8000, "没有比赛"),
+
+    DATE_ERROR(8001, "时间设置错误");
+
 
 
     private Integer errCode;

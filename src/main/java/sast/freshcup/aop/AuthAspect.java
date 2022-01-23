@@ -1,7 +1,6 @@
 package sast.freshcup.aop;
 
 import lombok.extern.slf4j.Slf4j;
-import org.apache.ibatis.ognl.ObjectElementsAccessor;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
@@ -23,15 +22,15 @@ import sast.freshcup.interceptor.AccountInterceptor;
 public class AuthAspect {
 
     @Pointcut("@annotation(sast.freshcup.annotation.AuthHandle)")
-    public void start(){
+    public void start() {
 
     }
 
     @Before("start()&&@annotation(auth)")
-    public Object auth(JoinPoint joinPoint, AuthHandle auth){
+    public Object auth(JoinPoint joinPoint, AuthHandle auth) {
         AuthEnum authEnum = auth.value();
         Account account = AccountInterceptor.accountHolder.get();
-        if(!AuthEnum.checkAuth(account,authEnum)){
+        if (!AuthEnum.checkAuth(account, authEnum)) {
             throw new LocalRunTimeException("权限不足");
         }
         return joinPoint;

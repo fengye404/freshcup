@@ -18,15 +18,15 @@ public class Result<T> {
     private Integer errCode;
     private T data;
 
-    public static <T> Result success(T data) {
-        return new Result<T>(true, null, null, data);
+    public static <T> Result<T> success(T data) {
+        return new Result<>(true, null, null, data);
     }
 
-    public static <Void> Result failure(String errMsg) {
-        return new Result(false, errMsg, 5000, null);
+    public static Result failure(String errMsg) {
+        return new Result<>(false, errMsg, 5000, null);
     }
 
-    public static <Void> Result failure(ErrorEnum error) {
-        return new Result(false, error.getErrMsg(), error.getErrCode(), null);
+    public static Result failure(ErrorEnum error) {
+        return new Result<>(false, error.getErrMsg(), error.getErrCode(), null);
     }
 }
