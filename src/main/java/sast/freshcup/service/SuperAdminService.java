@@ -1,7 +1,10 @@
 package sast.freshcup.service;
 
 import sast.freshcup.entity.Account;
+import sast.freshcup.entity.AccountContestManager;
 import sast.freshcup.entity.ProblemJudger;
+import sast.freshcup.pojo.AdminInfoOutput;
+import sast.freshcup.pojo.AdminOutput;
 
 import java.util.List;
 
@@ -14,9 +17,16 @@ public interface SuperAdminService {
 
     void createAdmin(Account account);
 
-    List<Account> randomAdmin(Integer number);
+    List<String> randomAdmin(Integer number, String password);
 
-    void deleteAdmin(Integer uid);
+    void deleteAdmin(Long uid);
 
-    void attributeContestAdmin(ProblemJudger problemJudger);
+    void attributeJudgeAdmin(ProblemJudger problemJudger);
+
+    void attributeContestAdmin(AccountContestManager accountContestManager);
+
+    AdminOutput getAllAdmin(Integer pageNum, Integer pageSize);
+
+    AdminInfoOutput getInfoById(Long uid);
+
 }

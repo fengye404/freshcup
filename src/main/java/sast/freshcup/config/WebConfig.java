@@ -18,11 +18,11 @@ public class WebConfig implements WebMvcConfigurer {
         this.accountInterceptor = accountInterceptor;
     }
 
-
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(accountInterceptor)
-                .addPathPatterns("/**")
-                .excludePathPatterns("/login", "/getValidateCode");
+//        registry.addInterceptor(accountInterceptor)
+//                .addPathPatterns("/**")
+//                .excludePathPatterns("/login", "/getValidateCode");
     }
+
 }

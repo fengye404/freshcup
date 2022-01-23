@@ -16,7 +16,13 @@ public enum ErrorEnum {
 
     WEBSOCKEY_ERROR(5003,"websocket异常"),
 
-    NO_USER(6000, "没有用户"),
+    AUTHORITY_ERROR(5004, "权限不足"),
+
+    ROLE_ERROR(5005, "对应角色错误"),
+
+    USER_EXIST(5005, "用户已存在"),
+
+    NO_USER(5006, "没有用户"),
 
     ANSWER_JUDGE(6000, "题目已批改"),
 
@@ -27,8 +33,6 @@ public enum ErrorEnum {
     NO_CONTEST(8000, "没有比赛"),
 
     DATE_ERROR(8001, "时间设置错误");
-
-
 
     private Integer errCode;
     private String errMsg;

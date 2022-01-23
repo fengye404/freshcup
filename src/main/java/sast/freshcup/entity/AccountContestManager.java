@@ -8,6 +8,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.NotNull;
+
 /**
  * (AccountContestManager)实体类
  *
@@ -27,11 +29,13 @@ public class AccountContestManager implements Serializable {
     /**
      * 比赛ID
      */
+    @NotNull(message = "比赛 id 不能为 null")
     private Long contestId;
 
     /**
      * 用户UID
      */
+    @NotNull(message = "用户 uid 不能为 null")
     private Long uid;
 
 }

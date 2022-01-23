@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  */
 @Configuration
 public class MybatisPlusConfig {
+
     @Bean
     public MybatisPlusInterceptor mybatisPlusInterceptor() {
         MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
@@ -26,6 +27,5 @@ public class MybatisPlusConfig {
         interceptor.addInnerInterceptor(paginationInnerInterceptor);
         return interceptor;
     }
-
 
 }

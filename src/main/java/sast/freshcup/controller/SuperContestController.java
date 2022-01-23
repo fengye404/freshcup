@@ -5,6 +5,7 @@ import sast.freshcup.annotation.AuthHandle;
 import sast.freshcup.common.enums.AuthEnum;
 import sast.freshcup.entity.Contest;
 import sast.freshcup.pojo.ContestOutput;
+import sast.freshcup.pojo.ProblemOutput;
 import sast.freshcup.service.SuperContestService;
 
 import javax.validation.Valid;
@@ -50,8 +51,23 @@ public class SuperContestController {
     }
 
     @GetMapping("all")
-    public ContestOutput getAllContest(Integer pageNum, Integer pageSize) {
+    public ContestOutput getAllContest(@RequestParam(name = "pageNum", defaultValue = "1") Integer pageNum,
+                                       @RequestParam(name = "pageSize", defaultValue = "5") Integer pageSize) {
         return superContestService.getAllContest(pageNum, pageSize);
+    }
+
+    @PostMapping("sort")
+    public String problemSort(@RequestParam(name = "id") Long id,
+                              @RequestParam(name = "orderId") Integer orderId) {
+        superContestService.problemSort(id, orderId);
+        return "success";
+    }
+
+    @GetMapping("problem")
+    public ProblemOutput getAllProblem(@RequestParam(name = "contestId") Long contestId,
+                                       @RequestParam(name = "pageNum", defaultValue = "1") Integer pageNum,
+                                       @RequestParam(name = "pageSize", defaultValue = "5") Integer pageSize) {
+        return superContestService.getAllProblem(contestId, pageNum, pageSize);
     }
 
 }

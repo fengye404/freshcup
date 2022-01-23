@@ -2,6 +2,7 @@ package sast.freshcup.service;
 
 import sast.freshcup.entity.Contest;
 import sast.freshcup.pojo.ContestOutput;
+import sast.freshcup.pojo.ProblemOutput;
 
 import java.util.List;
 
@@ -18,8 +19,12 @@ public interface SuperContestService {
 
     void deleteContest(Long cid);
 
+    void problemSort(Long id, Integer orderId);
+
     Contest getContestById(Long cid);
 
     ContestOutput getAllContest(Integer pageNum, Integer pageSize);
+
+    ProblemOutput getAllProblem(Long contestId, Integer pageNum, Integer pageSize);
 
 }
