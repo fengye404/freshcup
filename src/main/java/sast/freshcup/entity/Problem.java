@@ -85,7 +85,7 @@ public class Problem implements Serializable {
     /**
      * 在一个比赛中出现的题号
      */
-    private Integer order_id;
+    private Integer orderId;
 
     /**
      * 图片Base64，用"#"拼接

@@ -1,5 +1,6 @@
 package sast.freshcup.common.enums;
 
+import lombok.Data;
 import lombok.Getter;
 import sast.freshcup.entity.Account;
 
@@ -29,6 +30,14 @@ public enum AuthEnum {
     AuthEnum(String role, Integer code) {
         this.role = role;
         this.code = code;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public Integer getCode() {
+        return code;
     }
 
     public static Boolean checkAuth(Account account, AuthEnum needRole) {
