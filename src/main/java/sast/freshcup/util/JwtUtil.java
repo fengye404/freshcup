@@ -26,12 +26,18 @@ import java.util.concurrent.TimeUnit;
  **/
 @Component
 public class JwtUtil {
+
     @Value("${jwt.secret}")
     private String secret;
+
     @Value("${jwt.expiration}")
     private int expiration;
-    @Autowired
-    private RedisService redisService;
+
+    private final RedisService redisService;
+
+    public JwtUtil(RedisService redisService) {
+        this.redisService = redisService;
+    }
 
     public String generateToken(Account account) {
         Calendar time = Calendar.getInstance();
@@ -41,16 +47,14 @@ public class JwtUtil {
         builder.withClaim("username", account.getUsername());
         builder.withClaim("role", account.getRole());
         builder.withExpiresAt(time.getTime());
-        String token = builder.sign(Algorithm.HMAC256(secret));
-        return token;
+        return builder.sign(Algorithm.HMAC256(secret));
     }
 
     public Map<String, Claim> getClaims(String token) {
         try {
             JWTVerifier verifier = JWT.require(Algorithm.HMAC256(secret)).build();
             DecodedJWT decodedJWT = verifier.verify(token);
-            Map<String, Claim> claims = decodedJWT.getClaims();
-            return claims;
+            return decodedJWT.getClaims();
         } catch (JWTVerificationException e) {
             e.printStackTrace();
             throw new LocalRunTimeException(ErrorEnum.TOKEN_ERROR);
@@ -73,7 +77,7 @@ public class JwtUtil {
      */
     public Boolean isExpired(Account account) {
         Long expire = redisService.getExpire(RedisKeyConst.getTokenKey(account));
-        return expire > 0 ? false : true;
+        return expire <= 0;
     }
 
     public void reFreshToken(Account account) {

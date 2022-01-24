@@ -32,6 +32,11 @@ public class Problem implements Serializable {
     private Long contestId;
 
     /**
+     * 题目名称
+     */
+    private String problemName;
+
+    /**
      * 出题人UID
      */
     private Long ownerUid;

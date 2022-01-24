@@ -10,4 +10,8 @@ public class RedisKeyConst {
     public static String getTokenKey(Account account) {
         return "TOKEN:" + account.getUsername();
     }
+
+    public static String getAnswerKey(Long uid, Long problemId) {
+        return "ANSWER:" + uid + ":" + problemId + ":";
+    }
 }
