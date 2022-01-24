@@ -2,7 +2,6 @@ package sast.freshcup.response;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -17,8 +16,12 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
  **/
 @RestControllerAdvice
 public class ResponseHandler implements ResponseBodyAdvice {
-    @Autowired
-    private ObjectMapper objectMapper;
+
+    private final ObjectMapper objectMapper;
+
+    public ResponseHandler(ObjectMapper objectMapper) {
+        this.objectMapper = objectMapper;
+    }
 
     //是否执行转换，默认为true即可
     @Override

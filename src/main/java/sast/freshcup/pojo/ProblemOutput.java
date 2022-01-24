@@ -3,21 +3,21 @@ package sast.freshcup.pojo;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import sast.freshcup.entity.Contest;
+import sast.freshcup.entity.Problem;
 
 import java.util.List;
 
 /**
  * @program: freshcup
  * @author: cxy621
- * @create: 2022-01-23 00:14
+ * @create: 2022-01-23 21:40
  **/
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ContestOutput {
+public class ProblemOutput {
 
-    private List<Contest> records;
+    private List<Problem> records;
 
     private Long total;
 
