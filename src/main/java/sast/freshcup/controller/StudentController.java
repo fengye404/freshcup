@@ -6,10 +6,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import sast.freshcup.annotation.AuthHandle;
 import sast.freshcup.common.enums.AuthEnum;
-import sast.freshcup.pojo.ContestVO;
+import sast.freshcup.pojo.ProblemVO;
 import sast.freshcup.service.StudentService;
 
-import java.util.List;
+import java.time.Duration;
 import java.util.Map;
 
 /**
@@ -23,10 +23,27 @@ public class StudentController {
     @Autowired
     private StudentService studentService;
 
-    @AuthHandle(AuthEnum.STUDENT)
+    //@AuthHandle(AuthEnum.STUDENT)
     @GetMapping("/contestList")
-    public Map<String,Object> getContestList(Integer pageNum, Integer pageSize) {
-        List<ContestVO> contestList = studentService.getContestList(pageNum, pageSize);
-        return null;
+    public Map<String, Object> getContestList(Integer pageNum, Integer pageSize) {
+        return studentService.getContestList(pageNum, pageSize);
+    }
+
+    //@AuthHandle(AuthEnum.STUDENT)
+    @GetMapping("/problemList")
+    public Map<String, Object> getProblemList(Long contestId, Integer pageNum, Integer pageSize) {
+        return studentService.getProblemList(contestId, pageNum, pageSize);
+    }
+
+    //@AuthHandle(AuthEnum.STUDENT)
+    @GetMapping("/problem")
+    public ProblemVO getProblemById(Long problemId) {
+        return studentService.getProblemById(problemId);
+    }
+
+    //@AuthHandle(AuthEnum.STUDENT)
+    @GetMapping("/remainingTime")
+    public Map<String,Object> getRemainingTime(Long contestId) {
+        return studentService.getRemainingTime(contestId);
     }
 }

@@ -1,8 +1,9 @@
 package sast.freshcup.service;
 
-import sast.freshcup.pojo.ContestVO;
+import sast.freshcup.pojo.ProblemVO;
 
-import java.util.List;
+import java.time.Duration;
+import java.util.Map;
 
 /**
  * @author: 風楪fy
@@ -10,5 +11,13 @@ import java.util.List;
  **/
 public interface StudentService {
 
-    public List<ContestVO> getContestList(Integer pageNum,Integer pageSize);
+    public Map<String, Object> getContestList(Integer pageNum, Integer pageSize);
+
+    public Map<String, Object> getProblemList(Long contestId, Integer pageNum, Integer pageSize);
+
+    public ProblemVO getProblemById(Long problemId);
+
+    public void uploadAnswer(Long contestId, Long problemId, String content);
+
+    public Map<String,Object> getRemainingTime(Long contestId);
 }

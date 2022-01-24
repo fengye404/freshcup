@@ -10,11 +10,13 @@ public enum ErrorEnum {
 
     COMMON_ERROR(5000, "错误"),
 
-    TOKEN_ERROR(5001,"TOKEN错误"),
+    TOKEN_ERROR(5001, "TOKEN错误"),
 
-    NO_LOGIN(5002,"没有登录"),
+    NO_LOGIN(5002, "没有登录"),
 
-    WEBSOCKEY_ERROR(5003,"websocket异常"),
+    WEBSOCKEY_ERROR(5003, "websocket异常"),
+
+    NOT_TIME(5004, "现在不是比赛时间"),
 
     NO_USER(6000, "没有用户"),
 
