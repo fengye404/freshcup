@@ -5,6 +5,7 @@ import org.springframework.web.multipart.MultipartFile;
 import sast.freshcup.annotation.AuthHandle;
 import sast.freshcup.common.enums.AuthEnum;
 import sast.freshcup.entity.AccountContestManager;
+import sast.freshcup.pojo.AdminOutput;
 import sast.freshcup.pojo.UserOutput;
 import sast.freshcup.service.SuperUserService;
 
@@ -53,8 +54,14 @@ public class SuperStudentController {
     }
 
     @PostMapping("import")
-    public Map<String,Object> getUsersByContestId(MultipartFile user_data) throws IOException {
+    public Map<String, Object> getUsersByContestId(MultipartFile user_data) throws IOException {
         return superUserService.importUserAccount(user_data);
+    }
+
+    @GetMapping("all")
+    public AdminOutput getAllUsers(@RequestParam(name = "pageNum", defaultValue = "1") Integer pageNum,
+                                   @RequestParam(name = "pageSize", defaultValue = "5") Integer pageSize) {
+        return superUserService.getAllUsers(pageNum, pageSize);
     }
 
 }

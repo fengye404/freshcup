@@ -2,6 +2,7 @@ package sast.freshcup.service;
 
 import org.springframework.web.multipart.MultipartFile;
 import sast.freshcup.entity.AccountContestManager;
+import sast.freshcup.pojo.AdminOutput;
 import sast.freshcup.pojo.UserOutput;
 
 import java.io.IOException;
@@ -23,4 +24,6 @@ public interface SuperUserService {
     void deleteUserById(Long uid);
 
     void createUser(String username);
+
+    AdminOutput getAllUsers(Integer pageNum, Integer pageSize);
 }

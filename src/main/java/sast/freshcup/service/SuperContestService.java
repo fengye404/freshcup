@@ -4,8 +4,6 @@ import sast.freshcup.entity.Contest;
 import sast.freshcup.pojo.ContestOutput;
 import sast.freshcup.pojo.ProblemOutput;
 
-import java.util.List;
-
 /**
  * @program: freshcup
  * @author: cxy621
@@ -17,11 +15,11 @@ public interface SuperContestService {
 
     void editContest(Contest contest);
 
-    void deleteContest(Long cid);
+    void deleteContest(Long id);
 
     void problemSort(Long id, Integer orderId);
 
-    Contest getContestById(Long cid);
+    Contest getContestById(Long id);
 
     ContestOutput getAllContest(Integer pageNum, Integer pageSize);
 

@@ -2,6 +2,7 @@ package sast.freshcup.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
@@ -19,13 +20,12 @@ import sast.freshcup.exception.LocalRunTimeException;
 import sast.freshcup.mapper.AccountContestManagerMapper;
 import sast.freshcup.mapper.AccountMapper;
 import sast.freshcup.mapper.ContestMapper;
+import sast.freshcup.pojo.AdminOutput;
 import sast.freshcup.pojo.UserOutput;
-import sast.freshcup.pojo.UserSearch;
 import sast.freshcup.service.SuperUserService;
 
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -99,7 +99,7 @@ public class SuperUserServiceImpl implements SuperUserService {
             throw new LocalRunTimeException(ErrorEnum.USER_EXIST);
         }
         QueryWrapper<Contest> queryWrapper1 = new QueryWrapper<>();
-        queryWrapper1.eq("cid", accountContestManager.getContestId());
+        queryWrapper1.eq("id", accountContestManager.getContestId());
         if (contestMapper.selectOne(queryWrapper1) == null) {
             throw new LocalRunTimeException(ErrorEnum.NO_CONTEST);
         }
@@ -136,6 +136,15 @@ public class SuperUserServiceImpl implements SuperUserService {
         account.setPassword(DigestUtils.md5DigestAsHex(username.getBytes()));
         account.setRole(0);
         accountMapper.insert(account);
+    }
+
+    @Override
+    public AdminOutput getAllUsers(Integer pageNum, Integer pageSize) {
+        Page<Account> page = new Page<>(pageNum, pageSize);
+        QueryWrapper<Account> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("role", 0);
+        Page<Account> data = accountMapper.selectPage(page, queryWrapper);
+        return new AdminOutput(data.getRecords(), data.getTotal(), pageNum, pageSize);
     }
 
 }

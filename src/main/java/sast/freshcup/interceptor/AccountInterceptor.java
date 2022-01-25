@@ -1,7 +1,5 @@
 package sast.freshcup.interceptor;
 
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -19,7 +17,6 @@ import javax.servlet.http.HttpServletResponse;
  * @create: 2022-01-19 16:14
  **/
 @Component
-@Slf4j
 public class AccountInterceptor implements HandlerInterceptor {
 
     private final JwtUtil jwtUtil;
@@ -37,7 +34,6 @@ public class AccountInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request,
                              HttpServletResponse response, Object handler)
             throws Exception {
-        log.info("进入触发器");
         String token = request.getHeader("TOKEN");
         if (!StringUtils.hasLength(token)) {
             throw new LocalRunTimeException(ErrorEnum.TOKEN_ERROR);
@@ -45,7 +41,7 @@ public class AccountInterceptor implements HandlerInterceptor {
         Account account = jwtUtil.getAccount(token);
         if (account != null) {
             //登录过期
-            if(jwtUtil.isExpired(account)){
+            if (jwtUtil.isExpired(account)) {
                 throw new LocalRunTimeException("登录过期");
             }
             Account accountFromDB = accountMapper.selectById(account.getUid());
