@@ -4,6 +4,9 @@ import org.springframework.web.multipart.MultipartFile;
 import sast.freshcup.entity.AccountContestManager;
 import sast.freshcup.pojo.UserOutput;
 
+import java.io.IOException;
+import java.util.Map;
+
 /**
  * @program: freshcup
  * @author: cxy621
@@ -11,7 +14,7 @@ import sast.freshcup.pojo.UserOutput;
  **/
 public interface SuperUserService {
 
-    void importUserAccount(MultipartFile multipartFile);
+    Map<String, Object> importUserAccount(MultipartFile multipartFile) throws IOException;
 
     UserOutput getAllContestUser(Long contestId, Integer pageNum, Integer pageSize);
 

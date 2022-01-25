@@ -1,7 +1,13 @@
 package sast.freshcup.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -17,7 +23,11 @@ import sast.freshcup.pojo.UserOutput;
 import sast.freshcup.pojo.UserSearch;
 import sast.freshcup.service.SuperUserService;
 
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @program: freshcup
@@ -34,6 +44,7 @@ public class SuperUserServiceImpl implements SuperUserService {
 
     private final AccountContestManagerMapper accountContestManagerMapper;
 
+
     public SuperUserServiceImpl(AccountMapper accountMapper,
                                 AccountContestManagerMapper accountContestManagerMapper,
                                 ContestMapper contestMapper) {
@@ -44,8 +55,33 @@ public class SuperUserServiceImpl implements SuperUserService {
 
 
     @Override
-    public void importUserAccount(MultipartFile multipartFile) {
+    public Map<String, Object> importUserAccount(MultipartFile multipartFile) throws IOException {
+        Map resultMap = new HashMap();
+        AtomicInteger success = new AtomicInteger();
+        AtomicInteger failure = new AtomicInteger();
 
+        Workbook wb = new XSSFWorkbook(multipartFile.getInputStream());
+        Sheet sheet = wb.getSheetAt(0);
+        int size = sheet.getLastRowNum();
+        for (int i = 1; i < size; i++) {
+            Row row = sheet.getRow(i);
+            Cell cell = row.getCell(0);
+            String studentId = cell.getStringCellValue();
+            Account account = accountMapper.selectOne(new LambdaQueryWrapper<Account>().eq(Account::getUsername, studentId));
+            if (account != null) {
+                log.info(account.getUsername() + "学生已导入，无需再次导入");
+                failure.getAndIncrement();
+            } else {
+                log.info(studentId + "学生导入成功");
+                createUser(studentId);
+                success.getAndIncrement();
+            }
+        }
+
+        resultMap.put("success", success);
+        resultMap.put("failure", failure);
+
+        return resultMap;
     }
 
     @Override
