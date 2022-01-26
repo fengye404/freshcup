@@ -7,10 +7,10 @@ import org.springframework.stereotype.Service;
 import sast.freshcup.common.constants.RedisKeyConst;
 import sast.freshcup.common.enums.ErrorEnum;
 import sast.freshcup.entity.AccountContestManager;
-import sast.freshcup.entity.Answer;
 import sast.freshcup.entity.Contest;
 import sast.freshcup.exception.LocalRunTimeException;
 import sast.freshcup.mapper.*;
+import sast.freshcup.mapper.cache.ProblemVORepository;
 import sast.freshcup.mapper.vomapper.ProblemVOMapper;
 import sast.freshcup.mapper.vomapper.SimpleProblemVOMapper;
 import sast.freshcup.pojo.ContestVO;
@@ -53,6 +53,9 @@ public class StudentServiceImpl implements StudentService {
     private ProblemVOMapper problemVOMapper;
     @Autowired
     private RedisService redisService;
+
+    @Autowired
+    private ProblemVORepository problemVORepository;
 
     @Override
     public Map<String, Object> getContestList(Integer pageNum, Integer pageSize) {
@@ -99,19 +102,17 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public ProblemVO getProblemById(Long problemId) {
-        ProblemVO problemVO = problemVOMapper.selectById(problemId);
+        //无缓存
+        //ProblemVO problemVO = problemVOMapper.selectById(problemId);
+        //redis缓存
+        ProblemVO problemVO = problemVORepository.getProblemVOById(problemId);
         return problemVO;
     }
 
     @Override
     public void uploadAnswer(Long contestId, Long problemId, String content) {
         Long uid = accountHolder.get().getUid();
-        Answer answer = new Answer();
-        answer.setContestId(contestId);
-        answer.setProblemId(problemId);
-        answer.setUid(uid);
-        answer.setContent(content);
-        redisService.set(RedisKeyConst.getAnswerKey(uid, problemId), answer);
+        redisService.set(RedisKeyConst.getAnswerKey(contestId, uid, problemId), content);
     }
 
     @Override

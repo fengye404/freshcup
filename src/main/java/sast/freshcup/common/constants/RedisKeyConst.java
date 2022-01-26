@@ -11,7 +11,7 @@ public class RedisKeyConst {
         return "TOKEN:" + account.getUsername();
     }
 
-    public static String getAnswerKey(Long uid, Long problemId) {
-        return "ANSWER:" + uid + ":" + problemId + ":";
+    public static String getAnswerKey(Long contestId, Long uid, Long problemId) {
+        return contestId + "-ANSWER:" + uid + ":" + problemId;
     }
 }

@@ -9,7 +9,7 @@ class SastFreshCupApplicationTests {
 
     @Test
     void contextLoads() {
-        System.out.println(SecureUtil.md5("1"));
+
     }
 
 }

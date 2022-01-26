@@ -46,7 +46,7 @@ public class SuperContestServiceImpl implements SuperContestService {
         if (contest.getStart().compareTo(contest.getEnd()) > 0) {
             throw new LocalRunTimeException(ErrorEnum.DATE_ERROR);
         }
-        if (getContestById(contest.getCid()) == null) {
+        if (getContestById(contest.getId()) == null) {
             throw new LocalRunTimeException(ErrorEnum.NO_CONTEST);
         }
         contestMapper.updateById(contest);
