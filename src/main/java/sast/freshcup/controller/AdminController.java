@@ -56,6 +56,4 @@ public class AdminController {
     String updateProblem(@RequestBody Problem problem) {
         return adminService.updateProblem(problem);
     }
-
-
 }
