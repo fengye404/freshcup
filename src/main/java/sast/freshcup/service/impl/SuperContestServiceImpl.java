@@ -53,10 +53,10 @@ public class SuperContestServiceImpl implements SuperContestService {
     }
 
     @Override
-    public void deleteContest(Long cid) {
+    public void deleteContest(Long id) {
         QueryWrapper<Contest> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("cid", cid);
-        if (getContestById(cid) == null) {
+        queryWrapper.eq("id", id);
+        if (getContestById(id) == null) {
             throw new LocalRunTimeException(ErrorEnum.NO_CONTEST);
         }
         contestMapper.delete(queryWrapper);
@@ -75,9 +75,9 @@ public class SuperContestServiceImpl implements SuperContestService {
     }
 
     @Override
-    public Contest getContestById(Long cid) {
+    public Contest getContestById(Long id) {
         QueryWrapper<Contest> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("cid", cid);
+        queryWrapper.eq("id", id);
         Contest contest = contestMapper.selectOne(queryWrapper);
         if (contest == null) {
             throw new LocalRunTimeException(ErrorEnum.NO_CONTEST);

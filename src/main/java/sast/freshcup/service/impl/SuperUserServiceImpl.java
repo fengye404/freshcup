@@ -1,7 +1,14 @@
 package sast.freshcup.service.impl;
 
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -13,11 +20,14 @@ import sast.freshcup.exception.LocalRunTimeException;
 import sast.freshcup.mapper.AccountContestManagerMapper;
 import sast.freshcup.mapper.AccountMapper;
 import sast.freshcup.mapper.ContestMapper;
+import sast.freshcup.pojo.AdminOutput;
 import sast.freshcup.pojo.UserOutput;
-import sast.freshcup.pojo.UserSearch;
 import sast.freshcup.service.SuperUserService;
 
-import java.util.List;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @program: freshcup
@@ -34,6 +44,7 @@ public class SuperUserServiceImpl implements SuperUserService {
 
     private final AccountContestManagerMapper accountContestManagerMapper;
 
+
     public SuperUserServiceImpl(AccountMapper accountMapper,
                                 AccountContestManagerMapper accountContestManagerMapper,
                                 ContestMapper contestMapper) {
@@ -44,8 +55,33 @@ public class SuperUserServiceImpl implements SuperUserService {
 
 
     @Override
-    public void importUserAccount(MultipartFile multipartFile) {
+    public Map<String, Object> importUserAccount(MultipartFile multipartFile) throws IOException {
+        Map resultMap = new HashMap();
+        AtomicInteger success = new AtomicInteger();
+        AtomicInteger failure = new AtomicInteger();
 
+        Workbook wb = new XSSFWorkbook(multipartFile.getInputStream());
+        Sheet sheet = wb.getSheetAt(0);
+        int size = sheet.getLastRowNum();
+        for (int i = 1; i < size; i++) {
+            Row row = sheet.getRow(i);
+            Cell cell = row.getCell(0);
+            String studentId = cell.getStringCellValue();
+            Account account = accountMapper.selectOne(new LambdaQueryWrapper<Account>().eq(Account::getUsername, studentId));
+            if (account != null) {
+                log.info(account.getUsername() + "学生已导入，无需再次导入");
+                failure.getAndIncrement();
+            } else {
+                log.info(studentId + "学生导入成功");
+                createUser(studentId);
+                success.getAndIncrement();
+            }
+        }
+
+        resultMap.put("success", success);
+        resultMap.put("failure", failure);
+
+        return resultMap;
     }
 
     @Override
@@ -63,7 +99,7 @@ public class SuperUserServiceImpl implements SuperUserService {
             throw new LocalRunTimeException(ErrorEnum.USER_EXIST);
         }
         QueryWrapper<Contest> queryWrapper1 = new QueryWrapper<>();
-        queryWrapper1.eq("cid", accountContestManager.getContestId());
+        queryWrapper1.eq("id", accountContestManager.getContestId());
         if (contestMapper.selectOne(queryWrapper1) == null) {
             throw new LocalRunTimeException(ErrorEnum.NO_CONTEST);
         }
@@ -100,6 +136,15 @@ public class SuperUserServiceImpl implements SuperUserService {
         account.setPassword(DigestUtils.md5DigestAsHex(username.getBytes()));
         account.setRole(0);
         accountMapper.insert(account);
+    }
+
+    @Override
+    public AdminOutput getAllUsers(Integer pageNum, Integer pageSize) {
+        Page<Account> page = new Page<>(pageNum, pageSize);
+        QueryWrapper<Account> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("role", 0);
+        Page<Account> data = accountMapper.selectPage(page, queryWrapper);
+        return new AdminOutput(data.getRecords(), data.getTotal(), pageNum, pageSize);
     }
 
 }

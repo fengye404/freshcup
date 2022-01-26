@@ -1,5 +1,6 @@
 package sast.freshcup.interceptor;
 
+
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -18,7 +19,6 @@ import javax.servlet.http.HttpServletResponse;
  * @create: 2022-01-19 16:14
  **/
 @Component
-@Slf4j
 public class AccountInterceptor implements HandlerInterceptor {
 
     private final JwtUtil jwtUtil;
@@ -34,6 +34,7 @@ public class AccountInterceptor implements HandlerInterceptor {
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+
         String token = request.getHeader("TOKEN");
         if (!StringUtils.hasLength(token)) {
             throw new LocalRunTimeException(ErrorEnum.TOKEN_ERROR);

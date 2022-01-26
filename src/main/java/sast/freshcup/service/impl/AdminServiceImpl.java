@@ -50,7 +50,7 @@ public class AdminServiceImpl implements AdminService {
             throw new LocalRunTimeException(ErrorEnum.PARAMS_LOSS);
         }
 
-        Judge judgeTest = judgeMapper.selectOne(new QueryWrapper<Judge>().eq("judger_id",judgerId).eq("answer_id",answerId));
+        Judge judgeTest = judgeMapper.selectOne(new QueryWrapper<Judge>().eq("judger_id", judgerId).eq("answer_id", answerId));
         if (judgeTest != null) {
             throw new LocalRunTimeException(ErrorEnum.ANSWER_JUDGE);
         }
@@ -82,15 +82,15 @@ public class AdminServiceImpl implements AdminService {
     public Map<String, Object> getProblemList(Long contestId, Integer pageNum, Integer pageSize) {
 
         Page<Problem> studentPage = new Page<>(pageNum, pageSize);
-        Page<Problem> problemPage = problemMapper.selectPage(studentPage,new QueryWrapper<Problem>().eq("contest_id",contestId));
-        return getResultMap(problemPage.getRecords(), problemPage.getTotal());
+        Page<Problem> problemPage = problemMapper.selectPage(studentPage, new QueryWrapper<Problem>().eq("contest_id", contestId));
+        return getResultMap(problemPage.getRecords(), problemPage.getTotal(), pageNum, pageSize);
     }
 
     @Override
     public Map<String, Object> getContestList(Integer pageNum, Integer pageSize) {
 
         Page<Contest> contestPage = contestMapper.selectPage(new Page<Contest>(pageNum, pageSize), new QueryWrapper<Contest>());
-        return getResultMap(contestPage.getRecords(), contestPage.getTotal());
+        return getResultMap(contestPage.getRecords(), contestPage.getTotal(), pageNum, pageSize);
     }
 
     @Override
@@ -121,10 +121,12 @@ public class AdminServiceImpl implements AdminService {
         return "ok";
     }
 
-    public <T> Map<String, Object> getResultMap(List<T> objects, Long num) {
+    public <T> Map<String, Object> getResultMap(List<T> objects, Long num, Integer pageNum, Integer pageSize) {
         Map<String, Object> resultMap = new HashMap<>();
         resultMap.put("records", objects);
         resultMap.put("total", num);
+        resultMap.put("pageNum", pageNum);
+        resultMap.put("pageSize", pageSize);
         return resultMap;
     }
 }

@@ -9,7 +9,6 @@ import sast.freshcup.pojo.ProblemOutput;
 import sast.freshcup.service.SuperContestService;
 
 import javax.validation.Valid;
-import java.util.List;
 
 /**
  * @program: freshcup
@@ -40,14 +39,14 @@ public class SuperContestController {
     }
 
     @PostMapping("delete")
-    public String deleteContest(Long cid) {
-        superContestService.deleteContest(cid);
+    public String deleteContest(Long id) {
+        superContestService.deleteContest(id);
         return "success";
     }
 
     @GetMapping("info")
-    public Contest getContest(Long cid) {
-        return superContestService.getContestById(cid);
+    public Contest getContest(Long id) {
+        return superContestService.getContestById(id);
     }
 
     @GetMapping("all")

@@ -91,7 +91,7 @@ public class SuperAdminServiceImpl implements SuperAdminService {
             throw new LocalRunTimeException(ErrorEnum.USER_EXIST);
         }
         QueryWrapper<Contest> queryWrapper1 = new QueryWrapper<>();
-        queryWrapper1.eq("cid", problemJudger.getContestId());
+        queryWrapper1.eq("id", problemJudger.getContestId());
         if (contestMapper.selectOne(queryWrapper1) == null) {
             throw new LocalRunTimeException(ErrorEnum.NO_CONTEST);
         }
@@ -120,7 +120,7 @@ public class SuperAdminServiceImpl implements SuperAdminService {
             throw new LocalRunTimeException(ErrorEnum.USER_EXIST);
         }
         QueryWrapper<Contest> queryWrapper1 = new QueryWrapper<>();
-        queryWrapper1.eq("cid", accountContestManager.getContestId());
+        queryWrapper1.eq("id", accountContestManager.getContestId());
         if (contestMapper.selectOne(queryWrapper1) == null) {
             throw new LocalRunTimeException(ErrorEnum.NO_CONTEST);
         }
