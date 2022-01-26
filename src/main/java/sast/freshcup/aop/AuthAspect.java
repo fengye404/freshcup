@@ -8,6 +8,7 @@ import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.stereotype.Component;
 import sast.freshcup.annotation.AuthHandle;
 import sast.freshcup.common.enums.AuthEnum;
+import sast.freshcup.common.enums.ErrorEnum;
 import sast.freshcup.entity.Account;
 import sast.freshcup.exception.LocalRunTimeException;
 import sast.freshcup.interceptor.AccountInterceptor;
@@ -31,7 +32,7 @@ public class AuthAspect {
         AuthEnum authEnum = auth.value();
         Account account = AccountInterceptor.accountHolder.get();
         if (!AuthEnum.checkAuth(account, authEnum)) {
-            throw new LocalRunTimeException("权限不足");
+            throw new LocalRunTimeException(ErrorEnum.AUTHORITY_ERROR);
         }
         return joinPoint;
     }

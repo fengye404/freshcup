@@ -87,8 +87,11 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public Map<String, Object> getProblemList(Long contestId, Integer pageNum, Integer pageSize) {
+        //先调用比赛剩余时间，非比赛时间则抛出异常
+        this.getRemainingTime(contestId.longValue());
+
         Page<SimpleProblemVO> page = new Page<>(pageNum, pageSize);
-        simpleProblemVOMapper.selectOne(new QueryWrapper<SimpleProblemVO>().eq("contest_id", contestId));
+        simpleProblemVOMapper.selectPage(page, new QueryWrapper<SimpleProblemVO>().eq("contest_id", contestId));
         List<SimpleProblemVO> records = page.getRecords();
         long total = page.getTotal();
 
@@ -106,9 +109,21 @@ public class StudentServiceImpl implements StudentService {
         //ProblemVO problemVO = problemVOMapper.selectById(problemId);
         //redis缓存
         ProblemVO problemVO = problemVORepository.getProblemVOById(problemId);
+
+        //先调用比赛剩余时间，非比赛时间则抛出异常
+        this.getRemainingTime(problemVO.getContestId().longValue());
         return problemVO;
     }
 
+    /**
+     * 提交答案时，将答案暂存入redis，超管端同步入mysql
+     *
+     * 也可以用 EventLoop 或消息队列在提交时就进行异步插入mysql
+     *
+     * @param contestId
+     * @param problemId
+     * @param content
+     */
     @Override
     public void uploadAnswer(Long contestId, Long problemId, String content) {
         Long uid = accountHolder.get().getUid();
@@ -122,7 +137,7 @@ public class StudentServiceImpl implements StudentService {
         LocalDateTime end = contest.getEnd();
         LocalDateTime now = LocalDateTime.now();
         if (now.isAfter(end) || now.isBefore(start)) {
-            throw new LocalRunTimeException(ErrorEnum.NOT_TIME);
+            throw new LocalRunTimeException(ErrorEnum.ILLEGAL_TIME);
         } else {
             Duration between = Duration.between(now, end);
             SimpleDateFormat simpleDateFormat = new SimpleDateFormat("HH:mm:ss");

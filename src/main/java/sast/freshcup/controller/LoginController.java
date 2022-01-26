@@ -98,7 +98,11 @@ public class LoginController {
         Map<String, String> map = new HashMap<>();
         map.put("role", accountFromDB.getRole().toString());
         map.put("token", token);
+
+        log.info("===============================================");
+        log.info("用户登录：{}，role：{}", accountFromDB.getUsername(), accountFromDB.getRole());
         log.info("登录Agent:{}", agent);
+        log.info("===============================================");
 
         //用redis中的过期时间代替JWT的过期时间，每次经过拦截器时更新过期时间
         //先设置为30天

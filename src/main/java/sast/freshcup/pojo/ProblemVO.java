@@ -18,6 +18,8 @@ public class ProblemVO {
 
     private Integer id;
 
+    private Integer contestId;
+
     private String problemName;
 
     private Integer type;

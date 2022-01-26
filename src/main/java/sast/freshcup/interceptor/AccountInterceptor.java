@@ -43,7 +43,7 @@ public class AccountInterceptor implements HandlerInterceptor {
         if (account != null) {
             //登录过期
             if (jwtUtil.isExpired(account)) {
-                throw new LocalRunTimeException("登录过期");
+                throw new LocalRunTimeException(ErrorEnum.EXPIRED_LOGIN);
             }
             Account accountFromDB = accountMapper.selectById(account.getUid());
             //判断是否是已知用户

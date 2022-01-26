@@ -16,25 +16,27 @@ public enum ErrorEnum {
 
     WEBSOCKEY_ERROR(5003, "websocket异常"),
 
-    NOT_TIME(5004, "现在不是比赛时间"),
+    ILLEGAL_TIME(5004, "现在不是比赛时间"),
 
-    AUTHORITY_ERROR(5004, "权限不足"),
+    AUTHORITY_ERROR(5005, "权限不足"),
 
-    ROLE_ERROR(5005, "对应角色错误"),
+    ROLE_ERROR(5006, "对应角色错误"),
 
-    USER_EXIST(5005, "用户已存在"),
+    USER_EXIST(5007, "用户已存在"),
 
-    NO_USER(5006, "没有用户"),
+    NO_USER(5008, "没有对应用户"),
 
-    ANSWER_JUDGE(6000, "题目已批改"),
+    EXPIRED_LOGIN(5009, "登录过期"),
 
-    PROBLEM_NOT_EXIST(6001, "题目不存在"),
+    ANSWER_JUDGE(6000,"题目已批改"),
 
-    NO_PROBLEM(7000, "没有问题"),
+    PROBLEM_NOT_EXIST(6001,"题目不存在"),
 
-    NO_CONTEST(8000, "没有比赛"),
+    NO_PROBLEM(7000,"没有对应题目"),
 
-    DATE_ERROR(8001, "时间设置错误");
+    NO_CONTEST(8000,"没有比赛"),
+
+    DATE_ERROR(8001,"时间设置错误");
 
     private Integer errCode;
     private String errMsg;

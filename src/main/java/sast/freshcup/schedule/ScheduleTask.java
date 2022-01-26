@@ -1,6 +1,5 @@
 package sast.freshcup.schedule;
 
-import lombok.EqualsAndHashCode;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -24,7 +23,6 @@ public class ScheduleTask {
     @Autowired
     private AnswerMapper answerMapper;
 
-    @Scheduled
     public void updateAnswer() {
         Set<String> keys = redisService.getKeys("ANSWER");
         //stream操作将Set<String> 转化为 Set<Answer>
