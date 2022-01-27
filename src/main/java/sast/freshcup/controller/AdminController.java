@@ -2,6 +2,8 @@ package sast.freshcup.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import sast.freshcup.annotation.AuthHandle;
+import sast.freshcup.common.enums.AuthEnum;
 import sast.freshcup.entity.Judge;
 import sast.freshcup.entity.Problem;
 import sast.freshcup.service.AdminService;
@@ -14,6 +16,7 @@ import java.util.Map;
  **/
 @RestController
 @RequestMapping("/admin")
+@AuthHandle(AuthEnum.ADMIN)
 public class AdminController {
 
     @Autowired
