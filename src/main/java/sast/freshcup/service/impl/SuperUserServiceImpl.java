@@ -20,8 +20,8 @@ import sast.freshcup.exception.LocalRunTimeException;
 import sast.freshcup.mapper.AccountContestManagerMapper;
 import sast.freshcup.mapper.AccountMapper;
 import sast.freshcup.mapper.ContestMapper;
-import sast.freshcup.pojo.AdminOutput;
-import sast.freshcup.pojo.UserOutput;
+import sast.freshcup.pojo.AdminVO;
+import sast.freshcup.pojo.UserVO;
 import sast.freshcup.service.SuperUserService;
 
 import java.io.IOException;
@@ -53,7 +53,12 @@ public class SuperUserServiceImpl implements SuperUserService {
         this.contestMapper = contestMapper;
     }
 
-
+    /**
+     * @param multipartFile
+     * @return
+     * @throws IOException
+     * @Description: 导入学生账号
+     */
     @Override
     public Map<String, Object> importUserAccount(MultipartFile multipartFile) throws IOException {
         Map resultMap = new HashMap();
@@ -84,13 +89,24 @@ public class SuperUserServiceImpl implements SuperUserService {
         return resultMap;
     }
 
+    /**
+     * @param contestId
+     * @param pageNum
+     * @param pageSize
+     * @return
+     * @Description: 获得比赛所有学生
+     */
     @Override
-    public UserOutput getAllContestUser(Long contestId, Integer pageNum, Integer pageSize) {
-        return new UserOutput(accountMapper.getUsersByContestId(contestId, pageNum, pageSize),
+    public UserVO getAllContestUser(Long contestId, Integer pageNum, Integer pageSize) {
+        return new UserVO(accountMapper.getUsersByContestId(contestId, pageNum, pageSize),
                 accountMapper.getUsersNumberByContestId(contestId),
                 pageNum, pageSize);
     }
 
+    /**
+     * @param accountContestManager
+     * @Description: 给学生分配比赛
+     */
     @Override
     public void attributeContest(AccountContestManager accountContestManager) {
         QueryWrapper<AccountContestManager> queryWrapper = new QueryWrapper<>();
@@ -115,6 +131,10 @@ public class SuperUserServiceImpl implements SuperUserService {
         accountContestManagerMapper.insert(accountContestManager);
     }
 
+    /**
+     * @param uid
+     * @Description: 删除学生
+     */
     @Override
     public void deleteUserById(Long uid) {
         QueryWrapper<Account> queryWrapper = new QueryWrapper<>();
@@ -129,6 +149,10 @@ public class SuperUserServiceImpl implements SuperUserService {
         accountMapper.deleteById(uid);
     }
 
+    /**
+     * @param username
+     * @Description: 手动创建学生
+     */
     @Override
     public void createUser(String username) {
         Account account = new Account();
@@ -138,13 +162,19 @@ public class SuperUserServiceImpl implements SuperUserService {
         accountMapper.insert(account);
     }
 
+    /**
+     * @param pageNum
+     * @param pageSize
+     * @return
+     * @Description: 获取所有学生
+     */
     @Override
-    public AdminOutput getAllUsers(Integer pageNum, Integer pageSize) {
+    public AdminVO getAllUsers(Integer pageNum, Integer pageSize) {
         Page<Account> page = new Page<>(pageNum, pageSize);
         QueryWrapper<Account> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("role", 0);
         Page<Account> data = accountMapper.selectPage(page, queryWrapper);
-        return new AdminOutput(data.getRecords(), data.getTotal(), pageNum, pageSize);
+        return new AdminVO(data.getRecords(), data.getTotal(), pageNum, pageSize);
     }
 
 }

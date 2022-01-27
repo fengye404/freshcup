@@ -1,7 +1,5 @@
 package sast.freshcup.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.AbstractLambdaWrapper;
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -129,4 +127,5 @@ public class AdminServiceImpl implements AdminService {
         resultMap.put("pageSize", pageSize);
         return resultMap;
     }
+
 }

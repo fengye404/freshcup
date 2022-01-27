@@ -2,8 +2,8 @@ package sast.freshcup.service;
 
 import org.springframework.web.multipart.MultipartFile;
 import sast.freshcup.entity.AccountContestManager;
-import sast.freshcup.pojo.AdminOutput;
-import sast.freshcup.pojo.UserOutput;
+import sast.freshcup.pojo.AdminVO;
+import sast.freshcup.pojo.UserVO;
 
 import java.io.IOException;
 import java.util.Map;
@@ -17,7 +17,7 @@ public interface SuperUserService {
 
     Map<String, Object> importUserAccount(MultipartFile multipartFile) throws IOException;
 
-    UserOutput getAllContestUser(Long contestId, Integer pageNum, Integer pageSize);
+    UserVO getAllContestUser(Long contestId, Integer pageNum, Integer pageSize);
 
     void attributeContest(AccountContestManager accountContestManager);
 
@@ -25,5 +25,5 @@ public interface SuperUserService {
 
     void createUser(String username);
 
-    AdminOutput getAllUsers(Integer pageNum, Integer pageSize);
+    AdminVO getAllUsers(Integer pageNum, Integer pageSize);
 }

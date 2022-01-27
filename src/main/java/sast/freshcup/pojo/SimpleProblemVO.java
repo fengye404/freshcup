@@ -15,8 +15,11 @@ import sast.freshcup.entity.Problem;
 @NoArgsConstructor
 @TableName("problem")
 public class SimpleProblemVO {
+
     private Long id;
+
     private String problemName;
+
     private Integer orderId;
 
     public SimpleProblemVO(Problem problem) {
@@ -24,4 +27,5 @@ public class SimpleProblemVO {
         this.problemName = problem.getProblemName();
         this.orderId = problem.getOrderId();
     }
+
 }

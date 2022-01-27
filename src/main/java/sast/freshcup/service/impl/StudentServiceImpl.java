@@ -39,18 +39,25 @@ public class StudentServiceImpl implements StudentService {
 
     @Autowired
     private ContestMapper contestMapper;
+
     @Autowired
     private AccountMapper accountMapper;
+
     @Autowired
     private AccountContestManagerMapper accountContestManagerMapper;
+
     @Autowired
     private ProblemMapper problemMapper;
+
     @Autowired
     private AnswerMapper answerMapper;
+
     @Autowired
     private SimpleProblemVOMapper simpleProblemVOMapper;
+
     @Autowired
     private ProblemVOMapper problemVOMapper;
+
     @Autowired
     private RedisService redisService;
 
@@ -149,4 +156,5 @@ public class StudentServiceImpl implements StudentService {
             return res;
         }
     }
+
 }

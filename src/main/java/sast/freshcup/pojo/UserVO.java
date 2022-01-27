@@ -3,21 +3,20 @@ package sast.freshcup.pojo;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import sast.freshcup.entity.Account;
 
 import java.util.List;
 
 /**
  * @program: freshcup
  * @author: cxy621
- * @create: 2022-01-23 15:20
+ * @create: 2022-01-23 22:18
  **/
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class AdminOutput {
+public class UserVO {
 
-    private List<Account> records;
+    private List<UserSearch> records;
 
     private Long total;
 
