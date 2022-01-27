@@ -15,7 +15,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ContestOutput {
+public class ContestListVO {
 
     private List<Contest> records;
 

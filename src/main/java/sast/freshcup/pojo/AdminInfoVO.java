@@ -16,7 +16,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class AdminInfoOutput {
+public class AdminInfoVO {
 
     private List<AccountContestManager> accountInfos;
 

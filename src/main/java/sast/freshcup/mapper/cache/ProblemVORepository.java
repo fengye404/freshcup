@@ -12,6 +12,7 @@ import sast.freshcup.service.RedisService;
  **/
 @Repository
 public class ProblemVORepository extends AbstractRedisCacheRepository<String, ProblemVO> {
+
     private static final ProblemVO NULL_THING = new ProblemVO();
 
     @Autowired
@@ -37,4 +38,5 @@ public class ProblemVORepository extends AbstractRedisCacheRepository<String, Pr
     protected ProblemVO getIfAbsent(String key) {
         return problemVOMapper.selectById(key);
     }
+
 }

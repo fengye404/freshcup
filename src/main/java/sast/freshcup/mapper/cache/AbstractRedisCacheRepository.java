@@ -11,8 +11,11 @@ import java.util.function.Consumer;
  * @create: 2022-01-25 16:15
  **/
 public abstract class AbstractRedisCacheRepository<K, V> extends AbstractCacheRepository<K, V> {
+
     private RedisService redisService;
+
     private Integer expireTime;
+
     private final String prefix;
 
     public AbstractRedisCacheRepository(RedisService redisService, Integer expireTime, String prefix) {
@@ -63,4 +66,5 @@ public abstract class AbstractRedisCacheRepository<K, V> extends AbstractCacheRe
     protected void removeCache(K key) {
         redisService.get(prefix + key);
     }
+
 }

@@ -1,8 +1,8 @@
 package sast.freshcup.service;
 
 import sast.freshcup.entity.Contest;
-import sast.freshcup.pojo.ContestOutput;
-import sast.freshcup.pojo.ProblemOutput;
+import sast.freshcup.pojo.ContestListVO;
+import sast.freshcup.pojo.ProblemListVO;
 
 /**
  * @program: freshcup
@@ -19,10 +19,12 @@ public interface SuperContestService {
 
     void problemSort(Long id, Integer orderId);
 
+    void answerUpload();
+
     Contest getContestById(Long id);
 
-    ContestOutput getAllContest(Integer pageNum, Integer pageSize);
+    ContestListVO getAllContest(Integer pageNum, Integer pageSize);
 
-    ProblemOutput getAllProblem(Long contestId, Integer pageNum, Integer pageSize);
+    ProblemListVO getAllProblem(Long contestId, Integer pageNum, Integer pageSize);
 
 }

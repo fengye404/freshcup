@@ -12,4 +12,5 @@ import sast.freshcup.pojo.SimpleProblemVO;
 @TableName("problem")
 @Repository
 public interface SimpleProblemVOMapper extends BaseMapper<SimpleProblemVO> {
+
 }

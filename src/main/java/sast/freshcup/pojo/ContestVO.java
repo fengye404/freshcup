@@ -15,11 +15,17 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ContestVO {
+
     private Long id;
+
     private String name;
+
     private LocalDateTime start;
+
     private LocalDateTime end;
+
     private String description;
+
     private Boolean enable;
 
     public ContestVO(Contest contest) {
@@ -29,4 +35,5 @@ public class ContestVO {
         this.end = contest.getEnd();
         this.description = contest.getDescription();
     }
+
 }

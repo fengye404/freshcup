@@ -2,7 +2,6 @@ package sast.freshcup.schedule;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import sast.freshcup.entity.Answer;
 import sast.freshcup.mapper.AnswerMapper;
@@ -18,8 +17,10 @@ import java.util.stream.Collectors;
 @Slf4j
 @Component
 public class ScheduleTask {
+
     @Autowired
     private RedisService redisService;
+
     @Autowired
     private AnswerMapper answerMapper;
 
@@ -38,4 +39,5 @@ public class ScheduleTask {
         }).collect(Collectors.toSet());
         collect.forEach((answer -> answerMapper.insert(answer)));
     }
+
 }

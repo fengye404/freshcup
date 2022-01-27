@@ -50,4 +50,5 @@ public abstract class AbstractCacheRepository<K, V> {
      * @param consumer
      */
     protected abstract void processCache(K key, Consumer<V> consumer);
+
 }

@@ -1,6 +1,5 @@
 package sast.freshcup.mapper.vomapper;
 
-import com.baomidou.mybatisplus.annotation.TableName;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import org.springframework.stereotype.Repository;
 import sast.freshcup.pojo.ProblemVO;
@@ -11,4 +10,5 @@ import sast.freshcup.pojo.ProblemVO;
  **/
 @Repository
 public interface ProblemVOMapper extends BaseMapper<ProblemVO> {
+
 }

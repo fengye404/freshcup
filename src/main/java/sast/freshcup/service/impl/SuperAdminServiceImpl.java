@@ -9,8 +9,8 @@ import sast.freshcup.common.enums.ErrorEnum;
 import sast.freshcup.entity.*;
 import sast.freshcup.exception.LocalRunTimeException;
 import sast.freshcup.mapper.*;
-import sast.freshcup.pojo.AdminInfoOutput;
-import sast.freshcup.pojo.AdminOutput;
+import sast.freshcup.pojo.AdminInfoVO;
+import sast.freshcup.pojo.AdminVO;
 import sast.freshcup.service.SuperAdminService;
 import sast.freshcup.util.RandomUtil;
 
@@ -50,6 +50,10 @@ public class SuperAdminServiceImpl implements SuperAdminService {
         this.accountContestManagerMapper = accountContestManagerMapper;
     }
 
+    /**
+     * @param account 超管输入的管理员账号，密码=用户名（学号）
+     * @Description: 手动创建管理员账号
+     */
     @Override
     public void createAdmin(Account account) {
         account.setPassword(DigestUtils.md5DigestAsHex(account.getPassword().getBytes()));
@@ -57,6 +61,12 @@ public class SuperAdminServiceImpl implements SuperAdminService {
         accountMapper.insert(account);
     }
 
+    /**
+     * @param number   所需账号数目
+     * @param password 统一的密码
+     * @return 账号列表
+     * @Description: 随机生成账号
+     */
     @Override
     public List<String> randomAdmin(Integer number, String password) {
         List<String> accounts = new LinkedList<>();
@@ -69,6 +79,10 @@ public class SuperAdminServiceImpl implements SuperAdminService {
         return accounts;
     }
 
+    /**
+     * @param uid 对应 uid
+     * @Description: 删除对应管理员账号
+     */
     @Override
     public void deleteAdmin(Long uid) {
         QueryWrapper<Account> queryWrapper = new QueryWrapper<>();
@@ -77,16 +91,24 @@ public class SuperAdminServiceImpl implements SuperAdminService {
         if (account == null) {
             throw new LocalRunTimeException(ErrorEnum.NO_USER);
         }
+        //如果删除对象不为管理员则报错
         if (account.getRole() != 1) {
             throw new LocalRunTimeException(ErrorEnum.ROLE_ERROR);
         }
         accountMapper.deleteById(uid);
     }
 
+    /**
+     * @param problemJudger
+     * @Description: 分配批卷人
+     */
     @Override
     public void attributeJudgeAdmin(ProblemJudger problemJudger) {
         QueryWrapper<ProblemJudger> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("uid", problemJudger.getJudgerId());
+        queryWrapper.eq("uid", problemJudger.getJudgerId())
+                .eq("contest_id", problemJudger.getContestId())
+                .eq("problem_id", problemJudger.getProblemId());
+        //防止重复分配
         if (problemJudgerMapper.selectOne(queryWrapper) != null) {
             throw new LocalRunTimeException(ErrorEnum.USER_EXIST);
         }
@@ -103,6 +125,7 @@ public class SuperAdminServiceImpl implements SuperAdminService {
         QueryWrapper<Account> queryWrapper3 = new QueryWrapper<>();
         queryWrapper3.eq("uid", problemJudger.getJudgerId());
         Account account = accountMapper.selectOne(queryWrapper3);
+        //对披卷人身份进行判断
         if (account == null) {
             throw new LocalRunTimeException(ErrorEnum.NO_USER);
         }
@@ -112,10 +135,15 @@ public class SuperAdminServiceImpl implements SuperAdminService {
         problemJudgerMapper.insert(problemJudger);
     }
 
+    /**
+     * @param accountContestManager
+     * @Description: 给比赛分配批卷人
+     */
     @Override
     public void attributeContestAdmin(AccountContestManager accountContestManager) {
         QueryWrapper<AccountContestManager> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("uid", accountContestManager.getUid());
+        queryWrapper.eq("uid", accountContestManager.getUid())
+                .eq("contest_id", accountContestManager.getContestId());
         if (accountContestManagerMapper.selectOne(queryWrapper) != null) {
             throw new LocalRunTimeException(ErrorEnum.USER_EXIST);
         }
@@ -136,17 +164,28 @@ public class SuperAdminServiceImpl implements SuperAdminService {
         accountContestManagerMapper.insert(accountContestManager);
     }
 
+    /**
+     * @param pageNum
+     * @param pageSize
+     * @return
+     * @Description: 获取所有管理员信息
+     */
     @Override
-    public AdminOutput getAllAdmin(Integer pageNum, Integer pageSize) {
+    public AdminVO getAllAdmin(Integer pageNum, Integer pageSize) {
         Page<Account> page = new Page<>(pageNum, pageSize);
         QueryWrapper<Account> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("role", 1);
         Page<Account> data = accountMapper.selectPage(page, queryWrapper);
-        return new AdminOutput(data.getRecords(), data.getTotal(), pageNum, pageSize);
+        return new AdminVO(data.getRecords(), data.getTotal(), pageNum, pageSize);
     }
 
+    /**
+     * @param uid
+     * @return
+     * @Description: 获取管理员具体信息
+     */
     @Override
-    public AdminInfoOutput getInfoById(Long uid) {
+    public AdminInfoVO getInfoById(Long uid) {
         QueryWrapper<Account> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("uid", uid);
         Account account = accountMapper.selectOne(queryWrapper);
@@ -160,7 +199,7 @@ public class SuperAdminServiceImpl implements SuperAdminService {
         queryWrapper1.eq("uid", uid);
         QueryWrapper<ProblemJudger> queryWrapper2 = new QueryWrapper<>();
         queryWrapper2.eq("judger_id", uid);
-        return new AdminInfoOutput(accountContestManagerMapper.selectList(queryWrapper1),
+        return new AdminInfoVO(accountContestManagerMapper.selectList(queryWrapper1),
                 problemJudgerMapper.selectList(queryWrapper2));
     }
 
