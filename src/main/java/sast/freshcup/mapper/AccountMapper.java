@@ -1,9 +1,9 @@
 package sast.freshcup.mapper;
 
-import org.springframework.stereotype.Repository;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.springframework.stereotype.Repository;
 import sast.freshcup.entity.Account;
-import sast.freshcup.pojo.UserSearch;
+import sast.freshcup.pojo.AccountVO;
 
 import java.util.List;
 
@@ -16,8 +16,9 @@ import java.util.List;
 @Repository
 public interface AccountMapper extends BaseMapper<Account> {
 
-    List<UserSearch> getUsersByContestId(Long contestId, Integer pageNum, Integer pageSize);
+    List<AccountVO> getUsersByContestId(Long contestId, Integer role,
+                                        Integer pageNum, Integer pageSize);
 
-    Long getUsersNumberByContestId(Long contestId);
+    Long getUsersNumberByContestId(Long contestId, Integer role);
 
 }

@@ -12,11 +12,12 @@ import sast.freshcup.exception.LocalRunTimeException;
 import sast.freshcup.mapper.AnswerMapper;
 import sast.freshcup.mapper.ContestMapper;
 import sast.freshcup.mapper.ProblemMapper;
-import sast.freshcup.pojo.ContestListVO;
-import sast.freshcup.pojo.ProblemListVO;
 import sast.freshcup.service.RedisService;
 import sast.freshcup.service.SuperContestService;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -143,10 +144,9 @@ public class SuperContestServiceImpl implements SuperContestService {
      * @Description: 获取所有比赛
      */
     @Override
-    public ContestListVO getAllContest(Integer pageNum, Integer pageSize) {
-        Page<Contest> page = new Page<>(pageNum, pageSize);
-        Page<Contest> data = contestMapper.selectPage(page, null);
-        return new ContestListVO(data.getRecords(), data.getTotal(), pageNum, pageSize);
+    public Map<String, Object> getAllContest(Integer pageNum, Integer pageSize) {
+        Page<Contest> data = contestMapper.selectPage(new Page<>(pageNum, pageSize), null);
+        return getResultMap(data.getRecords(), data.getTotal(), pageNum, pageSize);
     }
 
 
@@ -158,12 +158,23 @@ public class SuperContestServiceImpl implements SuperContestService {
      * @Description: 获取对应比赛题目
      */
     @Override
-    public ProblemListVO getAllProblem(Long contestId, Integer pageNum, Integer pageSize) {
-        QueryWrapper<Problem> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("contest_id", contestId).orderByAsc("order_id");
-        Page<Problem> page = new Page<>(pageNum, pageSize);
-        Page<Problem> data = problemMapper.selectPage(page, queryWrapper);
-        return new ProblemListVO(data.getRecords(), data.getTotal(), pageNum, pageSize);
+    public Map<String, Object> getAllProblem(Long contestId, Integer pageNum, Integer pageSize) {
+        Page<Problem> data = problemMapper.selectPage(new Page<>(pageNum, pageSize),
+                new QueryWrapper<Problem>().eq("contest_id", contestId)
+                        .orderByAsc("order_id"));
+        return getResultMap(data.getRecords(), data.getTotal(), pageNum, pageSize);
+    }
+
+    private <T> Map<String, Object> getResultMap(List<T> records, Long total,
+                                                 Integer pageNum, Integer pageSize) {
+        return new HashMap<>() {
+            {
+                put("records", records);
+                put("total", total);
+                put("pageNum", pageNum);
+                put("pageSize", pageSize);
+            }
+        };
     }
 
 }

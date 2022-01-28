@@ -1,8 +1,8 @@
 package sast.freshcup.service;
 
 import sast.freshcup.entity.Contest;
-import sast.freshcup.pojo.ContestListVO;
-import sast.freshcup.pojo.ProblemListVO;
+
+import java.util.Map;
 
 /**
  * @program: freshcup
@@ -23,8 +23,8 @@ public interface SuperContestService {
 
     Contest getContestById(Long id);
 
-    ContestListVO getAllContest(Integer pageNum, Integer pageSize);
+    Map<String, Object> getAllContest(Integer pageNum, Integer pageSize);
 
-    ProblemListVO getAllProblem(Long contestId, Integer pageNum, Integer pageSize);
+    Map<String, Object> getAllProblem(Long contestId, Integer pageNum, Integer pageSize);
 
 }

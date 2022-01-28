@@ -5,9 +5,6 @@ import org.springframework.web.multipart.MultipartFile;
 import sast.freshcup.annotation.AuthHandle;
 import sast.freshcup.annotation.OperateLog;
 import sast.freshcup.common.enums.AuthEnum;
-import sast.freshcup.entity.AccountContestManager;
-import sast.freshcup.pojo.AdminVO;
-import sast.freshcup.pojo.UserVO;
 import sast.freshcup.service.SuperUserService;
 
 import java.io.IOException;
@@ -38,24 +35,10 @@ public class SuperStudentController {
 
     @OperateLog(operDesc = "手动创建学生账号")
     @PostMapping("create")
-    public String createUser(@RequestParam(value = "username") String username) {
-        superUserService.createUser(username);
-        return "success";
-    }
+    public String createUser(@RequestParam(value = "username") String username,
+                             @RequestParam(value = "contestId") Long contestId) {
 
-    @OperateLog(operDesc = "学生分配比赛")
-    @PostMapping("contest")
-    public String attributeContest(@RequestBody AccountContestManager accountContestManager) {
-        superUserService.attributeContest(accountContestManager);
         return "success";
-    }
-
-    @OperateLog(operDesc = "获取对应比赛的学生")
-    @GetMapping("info")
-    public UserVO getUsersByContestId(@RequestParam(name = "contestId") Long contestId,
-                                      @RequestParam(name = "pageNum", defaultValue = "1") Integer pageNum,
-                                      @RequestParam(name = "pageSize", defaultValue = "5") Integer pageSize) {
-        return superUserService.getAllContestUser(contestId, pageNum, pageSize);
     }
 
     @OperateLog(operDesc = "导入学生")
@@ -66,9 +49,16 @@ public class SuperStudentController {
 
     @OperateLog(operDesc = "查询所有学生信息")
     @GetMapping("all")
-    public AdminVO getAllUsers(@RequestParam(name = "pageNum", defaultValue = "1") Integer pageNum,
-                               @RequestParam(name = "pageSize", defaultValue = "5") Integer pageSize) {
-        return superUserService.getAllUsers(pageNum, pageSize);
+    public Map<String, Object> getAllUsers(@RequestParam(name = "contestId") Long contestId,
+                                           @RequestParam(name = "pageNum", defaultValue = "1")
+                                                   Integer pageNum,
+                                           @RequestParam(name = "pageSize", defaultValue = "5")
+                                                   Integer pageSize) {
+        if (contestId == null) {
+            return superUserService.getAllContestUser(pageNum, pageSize);
+        } else {
+            return superUserService.getAllContestUser(contestId, pageNum, pageSize);
+        }
     }
 
 }

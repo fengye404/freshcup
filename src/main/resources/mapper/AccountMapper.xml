@@ -4,11 +4,12 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="sast.freshcup.mapper.AccountMapper">
 
-    <select id="getUsersByContestId" resultType="sast.freshcup.pojo.UserSearch">
-        select a.uid, a.username, acm.contest_id contestId
+    <select id="getUsersByContestId" resultType="sast.freshcup.pojo.AccountVO">
+        select a.uid, a.username
         from account a
                  INNER JOIN account_contest_manager acm on a.uid = acm.uid
         where acm.contest_id = #{contestId}
+          and a.role = #{role}
         limit #{pageSize} offset #{pageNum}
     </select>
 
@@ -17,6 +18,7 @@
         from account a
                  INNER JOIN account_contest_manager acm on a.uid = acm.uid
         where acm.contest_id = #{contestId}
+          and a.role = #{role}
     </select>
 
 </mapper>

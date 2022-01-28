@@ -3,10 +3,9 @@ package sast.freshcup.service;
 import sast.freshcup.entity.Account;
 import sast.freshcup.entity.AccountContestManager;
 import sast.freshcup.entity.ProblemJudger;
-import sast.freshcup.pojo.AdminInfoVO;
-import sast.freshcup.pojo.AdminVO;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @program: freshcup
@@ -25,8 +24,8 @@ public interface SuperAdminService {
 
     void attributeContestAdmin(AccountContestManager accountContestManager);
 
-    AdminVO getAllAdmin(Integer pageNum, Integer pageSize);
+    Map<String, Object> getAllAdmin(Integer pageNum, Integer pageSize);
 
-    AdminInfoVO getInfoById(Long uid);
+    Map<String, Object> getAllAdmin(Long contestId, Integer pageNum, Integer pageSize);
 
 }

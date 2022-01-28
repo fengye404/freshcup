@@ -9,13 +9,15 @@ import sast.freshcup.common.enums.ErrorEnum;
 import sast.freshcup.entity.*;
 import sast.freshcup.exception.LocalRunTimeException;
 import sast.freshcup.mapper.*;
-import sast.freshcup.pojo.AdminInfoVO;
-import sast.freshcup.pojo.AdminVO;
+import sast.freshcup.mapper.vomapper.AccountVOMapper;
+import sast.freshcup.pojo.AccountVO;
 import sast.freshcup.service.SuperAdminService;
 import sast.freshcup.util.RandomUtil;
 
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @program: freshcup
@@ -38,16 +40,19 @@ public class SuperAdminServiceImpl implements SuperAdminService {
 
     private final RandomUtil randomUtil;
 
+    private final AccountVOMapper accountVOMapper;
+
     public SuperAdminServiceImpl(AccountMapper accountMapper,
                                  ProblemJudgerMapper problemJudgerMapper,
                                  RandomUtil randomUtil, ContestMapper contestMapper, ProblemMapper problemMapper,
-                                 AccountContestManagerMapper accountContestManagerMapper) {
+                                 AccountContestManagerMapper accountContestManagerMapper, AccountVOMapper accountVOMapper) {
         this.accountMapper = accountMapper;
         this.problemJudgerMapper = problemJudgerMapper;
         this.randomUtil = randomUtil;
         this.contestMapper = contestMapper;
         this.problemMapper = problemMapper;
         this.accountContestManagerMapper = accountContestManagerMapper;
+        this.accountVOMapper = accountVOMapper;
     }
 
     /**
@@ -147,11 +152,13 @@ public class SuperAdminServiceImpl implements SuperAdminService {
         if (accountContestManagerMapper.selectOne(queryWrapper) != null) {
             throw new LocalRunTimeException(ErrorEnum.USER_EXIST);
         }
+
         QueryWrapper<Contest> queryWrapper1 = new QueryWrapper<>();
         queryWrapper1.eq("id", accountContestManager.getContestId());
         if (contestMapper.selectOne(queryWrapper1) == null) {
             throw new LocalRunTimeException(ErrorEnum.NO_CONTEST);
         }
+
         QueryWrapper<Account> queryWrapper2 = new QueryWrapper<>();
         queryWrapper2.eq("uid", accountContestManager.getUid());
         Account account = accountMapper.selectOne(queryWrapper2);
@@ -161,6 +168,7 @@ public class SuperAdminServiceImpl implements SuperAdminService {
         if (account.getRole() != 1) {
             throw new LocalRunTimeException(ErrorEnum.ROLE_ERROR);
         }
+
         accountContestManagerMapper.insert(accountContestManager);
     }
 
@@ -168,39 +176,35 @@ public class SuperAdminServiceImpl implements SuperAdminService {
      * @param pageNum
      * @param pageSize
      * @return
-     * @Description: 获取所有管理员信息
+     * @Description: 如果没有输入比赛id就获取所有管理员信息，否则只获取对应比赛管理员
      */
     @Override
-    public AdminVO getAllAdmin(Integer pageNum, Integer pageSize) {
-        Page<Account> page = new Page<>(pageNum, pageSize);
-        QueryWrapper<Account> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("role", 1);
-        Page<Account> data = accountMapper.selectPage(page, queryWrapper);
-        return new AdminVO(data.getRecords(), data.getTotal(), pageNum, pageSize);
+    public Map<String, Object> getAllAdmin(Integer pageNum, Integer pageSize) {
+        Page<AccountVO> data = accountVOMapper.selectPage(
+                new Page<>(pageNum, pageSize),
+                new QueryWrapper<AccountVO>().eq("role", 1)
+        );
+        return getResultMap(data.getRecords(), data.getTotal(), pageNum, pageSize);
     }
 
-    /**
-     * @param uid
-     * @return
-     * @Description: 获取管理员具体信息
-     */
     @Override
-    public AdminInfoVO getInfoById(Long uid) {
-        QueryWrapper<Account> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("uid", uid);
-        Account account = accountMapper.selectOne(queryWrapper);
-        if (account == null) {
-            throw new LocalRunTimeException(ErrorEnum.NO_USER);
-        }
-        if (account.getRole() != 1) {
-            throw new LocalRunTimeException(ErrorEnum.ROLE_ERROR);
-        }
-        QueryWrapper<AccountContestManager> queryWrapper1 = new QueryWrapper<>();
-        queryWrapper1.eq("uid", uid);
-        QueryWrapper<ProblemJudger> queryWrapper2 = new QueryWrapper<>();
-        queryWrapper2.eq("judger_id", uid);
-        return new AdminInfoVO(accountContestManagerMapper.selectList(queryWrapper1),
-                problemJudgerMapper.selectList(queryWrapper2));
+    public Map<String, Object> getAllAdmin(Long contestId, Integer pageNum, Integer pageSize) {
+        return getResultMap(accountMapper.getUsersByContestId(contestId, 1,
+                        pageNum, pageSize),
+                accountMapper.getUsersNumberByContestId(contestId, 1),
+                pageNum, pageSize);
+    }
+
+    private <T> Map<String, Object> getResultMap(List<T> records, Long total,
+                                                 Integer pageNum, Integer pageSize) {
+        return new HashMap<>() {
+            {
+                put("records", records);
+                put("total", total);
+                put("pageNum", pageNum);
+                put("pageSize", pageSize);
+            }
+        };
     }
 
 }

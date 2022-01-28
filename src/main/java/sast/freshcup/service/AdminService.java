@@ -1,11 +1,8 @@
 package sast.freshcup.service;
 
-import org.springframework.stereotype.Component;
-import sast.freshcup.entity.Contest;
 import sast.freshcup.entity.Judge;
 import sast.freshcup.entity.Problem;
 
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -30,4 +27,5 @@ public interface AdminService {
     Map<String, Object> getContestList(Integer pageNum, Integer pageSize);
 
     Problem getProblemInfo(Long id);
+
 }

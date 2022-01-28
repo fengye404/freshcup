@@ -1,27 +1,25 @@
 package sast.freshcup.pojo;
 
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 /**
  * @program: freshcup
  * @author: cxy621
- * @create: 2022-01-23 22:18
+ * @create: 2022-01-23 23:04
  **/
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserVO {
+@TableName("account")
+public class AccountVO {
 
-    private List<UserSearch> records;
+    private Long uid;
 
-    private Long total;
+    private String username;
 
-    private Integer pageNum;
-
-    private Integer pageSize;
+    private Integer role;
 
 }
