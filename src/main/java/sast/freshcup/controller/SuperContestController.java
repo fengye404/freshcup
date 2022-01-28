@@ -5,11 +5,11 @@ import sast.freshcup.annotation.AuthHandle;
 import sast.freshcup.annotation.OperateLog;
 import sast.freshcup.common.enums.AuthEnum;
 import sast.freshcup.entity.Contest;
-import sast.freshcup.pojo.ContestListVO;
-import sast.freshcup.pojo.ProblemListVO;
 import sast.freshcup.service.SuperContestService;
 
 import javax.validation.Valid;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @program: freshcup
@@ -56,31 +56,44 @@ public class SuperContestController {
 
     @OperateLog(operDesc = "获取所有比赛信息")
     @GetMapping("all")
-    public ContestListVO getAllContest(@RequestParam(name = "pageNum", defaultValue = "1") Integer pageNum,
-                                       @RequestParam(name = "pageSize", defaultValue = "5") Integer pageSize) {
+    public Map<String, Object> getAllContest(@RequestParam(name = "pageNum", defaultValue = "1") Integer pageNum,
+                                             @RequestParam(name = "pageSize", defaultValue = "5") Integer pageSize) {
         return superContestService.getAllContest(pageNum, pageSize);
     }
 
     @OperateLog(operDesc = "题目排序")
     @PostMapping("sort")
-    public String problemSort(@RequestParam(name = "id") Long id,
-                              @RequestParam(name = "orderId") Integer orderId) {
-        superContestService.problemSort(id, orderId);
+    public String problemSort(@RequestBody HashMap<String, Object> request) {
+
         return "success";
     }
 
-    @OperateLog(operDesc = "获取题目信息")
+    @OperateLog(operDesc = "结束比赛，同步redis缓存")
+    @PostMapping("sort")
+    public String finishProblem() {
+        superContestService.answerUpload();
+        return "success";
+    }
+
+    @OperateLog(operDesc = "删除比赛所有学生、管理员账号")
+    @PostMapping("destroy")
+    public String destroyContest(Long contestId) {
+
+        return "success";
+    }
+
+    @OperateLog(operDesc = "获取比赛题目")
     @GetMapping("problem")
-    public ProblemListVO getAllProblem(@RequestParam(name = "contestId") Long contestId,
-                                       @RequestParam(name = "pageNum", defaultValue = "1") Integer pageNum,
-                                       @RequestParam(name = "pageSize", defaultValue = "5") Integer pageSize) {
+    public Map<String, Object> getAllProblem(@RequestParam(name = "contestId") Long contestId,
+                                             @RequestParam(name = "pageNum", defaultValue = "1") Integer pageNum,
+                                             @RequestParam(name = "pageSize", defaultValue = "5") Integer pageSize) {
         return superContestService.getAllProblem(contestId, pageNum, pageSize);
     }
 
-    @OperateLog(operDesc = "手动同步 redis 缓存")
-    @PostMapping("answer")
-    public String uploadAnswer() {
-        superContestService.answerUpload();
+    @OperateLog(operDesc = "导出比赛结果")
+    @PostMapping("result")
+    public String exportResult(@RequestParam(name = "contestId") Long contestId) {
+
         return "success";
     }
 

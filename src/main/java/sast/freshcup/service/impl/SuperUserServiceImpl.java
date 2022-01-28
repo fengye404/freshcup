@@ -14,18 +14,17 @@ import org.springframework.util.DigestUtils;
 import org.springframework.web.multipart.MultipartFile;
 import sast.freshcup.common.enums.ErrorEnum;
 import sast.freshcup.entity.Account;
-import sast.freshcup.entity.AccountContestManager;
-import sast.freshcup.entity.Contest;
 import sast.freshcup.exception.LocalRunTimeException;
 import sast.freshcup.mapper.AccountContestManagerMapper;
 import sast.freshcup.mapper.AccountMapper;
 import sast.freshcup.mapper.ContestMapper;
-import sast.freshcup.pojo.AdminVO;
-import sast.freshcup.pojo.UserVO;
+import sast.freshcup.mapper.vomapper.AccountVOMapper;
+import sast.freshcup.pojo.AccountVO;
 import sast.freshcup.service.SuperUserService;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -42,15 +41,18 @@ public class SuperUserServiceImpl implements SuperUserService {
 
     private final AccountMapper accountMapper;
 
+    private final AccountVOMapper accountVOMapper;
+
     private final AccountContestManagerMapper accountContestManagerMapper;
 
 
     public SuperUserServiceImpl(AccountMapper accountMapper,
                                 AccountContestManagerMapper accountContestManagerMapper,
-                                ContestMapper contestMapper) {
+                                ContestMapper contestMapper, AccountVOMapper accountVOMapper) {
         this.accountMapper = accountMapper;
         this.accountContestManagerMapper = accountContestManagerMapper;
         this.contestMapper = contestMapper;
+        this.accountVOMapper = accountVOMapper;
     }
 
     /**
@@ -94,41 +96,22 @@ public class SuperUserServiceImpl implements SuperUserService {
      * @param pageNum
      * @param pageSize
      * @return
-     * @Description: 获得比赛所有学生
+     * @Description: 如果没有输入比赛id就获取所有学生信息，否则只获取对应比赛学生
      */
     @Override
-    public UserVO getAllContestUser(Long contestId, Integer pageNum, Integer pageSize) {
-        return new UserVO(accountMapper.getUsersByContestId(contestId, pageNum, pageSize),
-                accountMapper.getUsersNumberByContestId(contestId),
+    public Map<String, Object> getAllContestUser(Long contestId, Integer pageNum, Integer pageSize) {
+        return getResultMap(accountMapper.getUsersByContestId(contestId, 0, pageNum, pageSize),
+                accountMapper.getUsersNumberByContestId(contestId, 0),
                 pageNum, pageSize);
     }
 
-    /**
-     * @param accountContestManager
-     * @Description: 给学生分配比赛
-     */
     @Override
-    public void attributeContest(AccountContestManager accountContestManager) {
-        QueryWrapper<AccountContestManager> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("uid", accountContestManager.getUid());
-        if (accountContestManagerMapper.selectOne(queryWrapper) != null) {
-            throw new LocalRunTimeException(ErrorEnum.USER_EXIST);
-        }
-        QueryWrapper<Contest> queryWrapper1 = new QueryWrapper<>();
-        queryWrapper1.eq("id", accountContestManager.getContestId());
-        if (contestMapper.selectOne(queryWrapper1) == null) {
-            throw new LocalRunTimeException(ErrorEnum.NO_CONTEST);
-        }
-        QueryWrapper<Account> queryWrapper2 = new QueryWrapper<>();
-        queryWrapper2.eq("uid", accountContestManager.getUid());
-        Account account = accountMapper.selectOne(queryWrapper2);
-        if (account == null) {
-            throw new LocalRunTimeException(ErrorEnum.NO_USER);
-        }
-        if (account.getRole() != 0) {
-            throw new LocalRunTimeException(ErrorEnum.ROLE_ERROR);
-        }
-        accountContestManagerMapper.insert(accountContestManager);
+    public Map<String, Object> getAllContestUser(Integer pageNum, Integer pageSize) {
+        Page<AccountVO> data = accountVOMapper.selectPage(
+                new Page<>(pageNum, pageSize),
+                new QueryWrapper<AccountVO>().eq("role", 0)
+        );
+        return getResultMap(data.getRecords(), data.getTotal(), pageNum, pageSize);
     }
 
     /**
@@ -137,15 +120,14 @@ public class SuperUserServiceImpl implements SuperUserService {
      */
     @Override
     public void deleteUserById(Long uid) {
-        QueryWrapper<Account> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("uid", uid);
-        Account account = accountMapper.selectOne(queryWrapper);
+        Account account = accountMapper.selectOne(new QueryWrapper<Account>().eq("uid", uid));
         if (account == null) {
             throw new LocalRunTimeException(ErrorEnum.NO_USER);
         }
         if (account.getRole() != 0) {
             throw new LocalRunTimeException(ErrorEnum.ROLE_ERROR);
         }
+
         accountMapper.deleteById(uid);
     }
 
@@ -162,19 +144,16 @@ public class SuperUserServiceImpl implements SuperUserService {
         accountMapper.insert(account);
     }
 
-    /**
-     * @param pageNum
-     * @param pageSize
-     * @return
-     * @Description: 获取所有学生
-     */
-    @Override
-    public AdminVO getAllUsers(Integer pageNum, Integer pageSize) {
-        Page<Account> page = new Page<>(pageNum, pageSize);
-        QueryWrapper<Account> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("role", 0);
-        Page<Account> data = accountMapper.selectPage(page, queryWrapper);
-        return new AdminVO(data.getRecords(), data.getTotal(), pageNum, pageSize);
+    private <T> Map<String, Object> getResultMap(List<T> records, Long total,
+                                                 Integer pageNum, Integer pageSize) {
+        return new HashMap<>() {
+            {
+                put("records", records);
+                put("total", total);
+                put("pageNum", pageNum);
+                put("pageSize", pageSize);
+            }
+        };
     }
 
 }
