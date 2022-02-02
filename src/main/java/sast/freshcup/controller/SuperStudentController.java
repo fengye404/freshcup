@@ -43,13 +43,16 @@ public class SuperStudentController {
 
     @OperateLog(operDesc = "导入学生")
     @PostMapping("import")
-    public Map<String, Object> getUsersByContestId(MultipartFile user_data) throws IOException {
-        return superUserService.importUserAccount(user_data);
+    public Map<String, Object> getUsersByContestId(
+            @RequestParam(name = "contestId") Long contestId,
+            @RequestBody MultipartFile user_data) throws IOException {
+        return superUserService.importUserAccount(user_data, contestId);
     }
 
     @OperateLog(operDesc = "查询所有学生信息")
     @GetMapping("all")
-    public Map<String, Object> getAllUsers(@RequestParam(name = "contestId") Long contestId,
+    public Map<String, Object> getAllUsers(@RequestParam(name = "contestId", required = false)
+                                                   Long contestId,
                                            @RequestParam(name = "pageNum", defaultValue = "1")
                                                    Integer pageNum,
                                            @RequestParam(name = "pageSize", defaultValue = "5")

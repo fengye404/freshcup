@@ -1,8 +1,10 @@
 package sast.freshcup.mapper;
 
-import org.springframework.stereotype.Repository;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import org.springframework.stereotype.Repository;
 import sast.freshcup.entity.Answer;
+
+import java.util.List;
 
 /**
  * (Answer)表数据库访问层
@@ -12,5 +14,7 @@ import sast.freshcup.entity.Answer;
  */
 @Repository
 public interface AnswerMapper extends BaseMapper<Answer> {
+
+    List<Long> getUidsByContestId(Long contestId);
 
 }

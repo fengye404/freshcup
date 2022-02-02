@@ -12,14 +12,12 @@ import java.util.Map;
  **/
 public interface SuperUserService {
 
-    Map<String, Object> importUserAccount(MultipartFile multipartFile) throws IOException;
+    Map<String, Object> importUserAccount(MultipartFile multipartFile, Long contestId) throws IOException;
 
     Map<String, Object> getAllContestUser(Long contestId, Integer pageNum, Integer pageSize);
 
     Map<String, Object> getAllContestUser(Integer pageNum, Integer pageSize);
 
     void deleteUserById(Long uid);
-
-    void createUser(String username);
 
 }

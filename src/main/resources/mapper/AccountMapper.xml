@@ -5,7 +5,7 @@
 <mapper namespace="sast.freshcup.mapper.AccountMapper">
 
     <select id="getUsersByContestId" resultType="sast.freshcup.pojo.AccountVO">
-        select a.uid, a.username
+        select a.*
         from account a
                  INNER JOIN account_contest_manager acm on a.uid = acm.uid
         where acm.contest_id = #{contestId}

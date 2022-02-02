@@ -1,10 +1,10 @@
 package sast.freshcup.service;
 
-import sast.freshcup.entity.Account;
-import sast.freshcup.entity.AccountContestManager;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.springframework.web.multipart.MultipartFile;
 import sast.freshcup.entity.ProblemJudger;
 
-import java.util.List;
+import java.io.IOException;
 import java.util.Map;
 
 /**
@@ -14,15 +14,11 @@ import java.util.Map;
  **/
 public interface SuperAdminService {
 
-    void createAdmin(Account account);
-
-    List<String> randomAdmin(Integer number, String password);
+    Workbook importAdmin(Long contestId, MultipartFile file) throws IOException;
 
     void deleteAdmin(Long uid);
 
     void attributeJudgeAdmin(ProblemJudger problemJudger);
-
-    void attributeContestAdmin(AccountContestManager accountContestManager);
 
     Map<String, Object> getAllAdmin(Integer pageNum, Integer pageSize);
 

@@ -1,7 +1,5 @@
 package sast.freshcup.entity;
 
-import java.io.Serializable;
-
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.AllArgsConstructor;
@@ -9,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 
 /**
  * (AccountContestManager)实体类
@@ -37,6 +36,11 @@ public class AccountContestManager implements Serializable {
      */
     @NotNull(message = "用户 uid 不能为 null")
     private Long uid;
+
+    public AccountContestManager(Long contestId, Long uid) {
+        this.contestId = contestId;
+        this.uid = uid;
+    }
 
 }
 

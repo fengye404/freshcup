@@ -7,7 +7,7 @@ import sast.freshcup.pojo.AccountVO;
 /**
  * @program: freshcup
  * @author: cxy621
- * @create: 2022-01-28 16:05
+ * @create: 2022-01-29 16:41
  **/
 @Repository
 public interface AccountVOMapper extends BaseMapper<AccountVO> {

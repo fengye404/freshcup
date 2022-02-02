@@ -1,10 +1,16 @@
 package sast.freshcup.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Service;
 import org.springframework.util.DigestUtils;
+import org.springframework.web.multipart.MultipartFile;
 import sast.freshcup.common.enums.ErrorEnum;
 import sast.freshcup.entity.*;
 import sast.freshcup.exception.LocalRunTimeException;
@@ -14,10 +20,11 @@ import sast.freshcup.pojo.AccountVO;
 import sast.freshcup.service.SuperAdminService;
 import sast.freshcup.util.RandomUtil;
 
-import java.util.HashMap;
-import java.util.LinkedList;
+import java.io.IOException;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @program: freshcup
@@ -56,32 +63,78 @@ public class SuperAdminServiceImpl implements SuperAdminService {
     }
 
     /**
-     * @param account 超管输入的管理员账号，密码=用户名（学号）
-     * @Description: 手动创建管理员账号
+     * @param contestId
+     * @param file
+     * @return
+     * @throws IOException
+     * @Description: 导入管理员
      */
     @Override
-    public void createAdmin(Account account) {
-        account.setPassword(DigestUtils.md5DigestAsHex(account.getPassword().getBytes()));
-        account.setRole(1);
-        accountMapper.insert(account);
+    public Workbook importAdmin(Long contestId, MultipartFile file)
+            throws IOException {
+        if (contestMapper.selectOne(new LambdaQueryWrapper<Contest>()
+                .eq(Contest::getId, contestId)) == null) {
+            throw new LocalRunTimeException(ErrorEnum.NO_CONTEST);
+        }
+
+        AtomicInteger success = new AtomicInteger(0);
+        AtomicInteger failure = new AtomicInteger(0);
+
+        Workbook output = new XSSFWorkbook();
+        Sheet sheetOutput = output.createSheet("结果");
+        Row rowOutput = sheetOutput.createRow(0);
+        rowOutput.createCell(0).setCellValue("账号");
+        rowOutput.createCell(1).setCellValue("密码");
+
+        Workbook workbook = new XSSFWorkbook(file.getInputStream());
+        Sheet sheet = workbook.getSheetAt(0);
+        int rowNum = sheet.getLastRowNum();
+        for (int i = 1; i <= rowNum; i++) {
+            Row row = sheet.getRow(i);
+            Cell cell = row.getCell(0);
+            String username = cell.getStringCellValue();
+            Account account = accountMapper.selectOne(new LambdaQueryWrapper<Account>()
+                    .eq(Account::getUsername, username));
+            if (account != null) {
+                if (!account.getRole().equals(1)) {
+                    throw new LocalRunTimeException(ErrorEnum.ROLE_ERROR);
+                }
+                log.info(username + " 管理员已导入，无需再次导入");
+                failure.getAndIncrement();
+            } else {
+                log.info(username + " 管理员导入成功");
+                success.getAndIncrement();
+
+                rowOutput = sheetOutput.createRow(success.get());
+                rowOutput.createCell(0).setCellValue(username);
+                String password = createAdmin(username);
+                rowOutput.createCell(1).setCellValue(password);
+            }
+            addContestUser(contestId, username, accountMapper, accountContestManagerMapper);
+        }
+        if (sheetOutput.getLastRowNum() == 0) {
+            sheetOutput.createRow(1);
+        }
+        sheetOutput.getRow(0).createCell(3).setCellValue("成功导入" + success.get() + "个");
+        sheetOutput.getRow(1).createCell(3).setCellValue("失败" + failure.get() + "个");
+        return output;
     }
 
-    /**
-     * @param number   所需账号数目
-     * @param password 统一的密码
-     * @return 账号列表
-     * @Description: 随机生成账号
-     */
-    @Override
-    public List<String> randomAdmin(Integer number, String password) {
-        List<String> accounts = new LinkedList<>();
-        for (int i = 0; i < number; i++) {
-            Account account = new Account(randomUtil.getStr(),
-                    DigestUtils.md5DigestAsHex(password.getBytes()), 1);
-            accounts.add(account.getUsername());
-            accountMapper.insert(account);
+    static void addContestUser(Long contestId, String username,
+                               AccountMapper accountMapper,
+                               AccountContestManagerMapper accountContestManagerMapper) {
+        Account account;
+        account = accountMapper.selectOne(
+                new LambdaQueryWrapper<Account>().eq(Account::getUsername, username)
+        );
+        if (accountContestManagerMapper.selectOne(
+                new LambdaQueryWrapper<AccountContestManager>()
+                        .eq(AccountContestManager::getUid, account.getUid())
+                        .eq(AccountContestManager::getContestId, contestId)) == null) {
+            accountContestManagerMapper.insert(
+                    new AccountContestManager(contestId, account.getUid())
+            );
         }
-        return accounts;
     }
 
     /**
@@ -90,8 +143,8 @@ public class SuperAdminServiceImpl implements SuperAdminService {
      */
     @Override
     public void deleteAdmin(Long uid) {
-        QueryWrapper<Account> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("uid", uid);
+        LambdaQueryWrapper<Account> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(Account::getUid, uid);
         Account account = accountMapper.selectOne(queryWrapper);
         if (account == null) {
             throw new LocalRunTimeException(ErrorEnum.NO_USER);
@@ -100,7 +153,15 @@ public class SuperAdminServiceImpl implements SuperAdminService {
         if (account.getRole() != 1) {
             throw new LocalRunTimeException(ErrorEnum.ROLE_ERROR);
         }
-        accountMapper.deleteById(uid);
+        accountMapper.delete(queryWrapper);
+
+        accountContestManagerMapper.delete(
+                new LambdaQueryWrapper<AccountContestManager>()
+                        .eq(AccountContestManager::getUid, uid));
+
+        problemJudgerMapper.delete(
+                new LambdaQueryWrapper<ProblemJudger>()
+                        .eq(ProblemJudger::getJudgerId, uid));
     }
 
     /**
@@ -109,67 +170,40 @@ public class SuperAdminServiceImpl implements SuperAdminService {
      */
     @Override
     public void attributeJudgeAdmin(ProblemJudger problemJudger) {
-        QueryWrapper<ProblemJudger> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("uid", problemJudger.getJudgerId())
-                .eq("contest_id", problemJudger.getContestId())
-                .eq("problem_id", problemJudger.getProblemId());
+        LambdaQueryWrapper<ProblemJudger> queryWrapper = new LambdaQueryWrapper<>();
+        queryWrapper.eq(ProblemJudger::getJudgerId, problemJudger.getJudgerId())
+                .eq(ProblemJudger::getContestId, problemJudger.getContestId())
+                .eq(ProblemJudger::getProblemId, problemJudger.getProblemId());
         //防止重复分配
         if (problemJudgerMapper.selectOne(queryWrapper) != null) {
             throw new LocalRunTimeException(ErrorEnum.USER_EXIST);
         }
-        QueryWrapper<Contest> queryWrapper1 = new QueryWrapper<>();
-        queryWrapper1.eq("id", problemJudger.getContestId());
-        if (contestMapper.selectOne(queryWrapper1) == null) {
+
+        if (contestMapper.selectOne(
+                new LambdaQueryWrapper<Contest>()
+                        .eq(Contest::getId, problemJudger.getContestId())) == null) {
             throw new LocalRunTimeException(ErrorEnum.NO_CONTEST);
         }
-        QueryWrapper<Problem> queryWrapper2 = new QueryWrapper<>();
-        queryWrapper2.eq("id", problemJudger.getProblemId());
-        if (problemMapper.selectOne(queryWrapper2) == null) {
+
+        if (problemMapper.selectOne(
+                new LambdaQueryWrapper<Problem>()
+                        .eq(Problem::getId, problemJudger.getProblemId())) == null) {
             throw new LocalRunTimeException(ErrorEnum.NO_PROBLEM);
         }
-        QueryWrapper<Account> queryWrapper3 = new QueryWrapper<>();
-        queryWrapper3.eq("uid", problemJudger.getJudgerId());
-        Account account = accountMapper.selectOne(queryWrapper3);
-        //对披卷人身份进行判断
+
+        Account account = accountMapper.selectOne(
+                new LambdaQueryWrapper<Account>()
+                        .eq(Account::getUid, problemJudger.getJudgerId())
+        );
+        //对批卷人身份进行判断
         if (account == null) {
             throw new LocalRunTimeException(ErrorEnum.NO_USER);
         }
         if (account.getRole() != 1) {
             throw new LocalRunTimeException(ErrorEnum.ROLE_ERROR);
         }
+
         problemJudgerMapper.insert(problemJudger);
-    }
-
-    /**
-     * @param accountContestManager
-     * @Description: 给比赛分配批卷人
-     */
-    @Override
-    public void attributeContestAdmin(AccountContestManager accountContestManager) {
-        QueryWrapper<AccountContestManager> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("uid", accountContestManager.getUid())
-                .eq("contest_id", accountContestManager.getContestId());
-        if (accountContestManagerMapper.selectOne(queryWrapper) != null) {
-            throw new LocalRunTimeException(ErrorEnum.USER_EXIST);
-        }
-
-        QueryWrapper<Contest> queryWrapper1 = new QueryWrapper<>();
-        queryWrapper1.eq("id", accountContestManager.getContestId());
-        if (contestMapper.selectOne(queryWrapper1) == null) {
-            throw new LocalRunTimeException(ErrorEnum.NO_CONTEST);
-        }
-
-        QueryWrapper<Account> queryWrapper2 = new QueryWrapper<>();
-        queryWrapper2.eq("uid", accountContestManager.getUid());
-        Account account = accountMapper.selectOne(queryWrapper2);
-        if (account == null) {
-            throw new LocalRunTimeException(ErrorEnum.NO_USER);
-        }
-        if (account.getRole() != 1) {
-            throw new LocalRunTimeException(ErrorEnum.ROLE_ERROR);
-        }
-
-        accountContestManagerMapper.insert(accountContestManager);
     }
 
     /**
@@ -182,7 +216,7 @@ public class SuperAdminServiceImpl implements SuperAdminService {
     public Map<String, Object> getAllAdmin(Integer pageNum, Integer pageSize) {
         Page<AccountVO> data = accountVOMapper.selectPage(
                 new Page<>(pageNum, pageSize),
-                new QueryWrapper<AccountVO>().eq("role", 1)
+                new LambdaQueryWrapper<AccountVO>().eq(AccountVO::getRole, 1)
         );
         return getResultMap(data.getRecords(), data.getTotal(), pageNum, pageSize);
     }
@@ -197,7 +231,7 @@ public class SuperAdminServiceImpl implements SuperAdminService {
 
     private <T> Map<String, Object> getResultMap(List<T> records, Long total,
                                                  Integer pageNum, Integer pageSize) {
-        return new HashMap<>() {
+        return new LinkedHashMap<>(4) {
             {
                 put("records", records);
                 put("total", total);
@@ -205,6 +239,16 @@ public class SuperAdminServiceImpl implements SuperAdminService {
                 put("pageSize", pageSize);
             }
         };
+    }
+
+    private String createAdmin(String username) {
+        Account account = new Account();
+        String password = randomUtil.randomStr(8);
+        account.setUsername(username);
+        account.setPassword(DigestUtils.md5DigestAsHex(password.getBytes()));
+        account.setRole(1);
+        accountMapper.insert(account);
+        return password;
     }
 
 }

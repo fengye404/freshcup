@@ -1,12 +1,12 @@
 package sast.freshcup.entity;
 
-import java.io.Serializable;
-
 import com.baomidou.mybatisplus.annotation.IdType;
 import com.baomidou.mybatisplus.annotation.TableId;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.io.Serializable;
 
 /**
  * (Result)实体类
@@ -39,5 +39,10 @@ public class Result implements Serializable {
      */
     private Integer totalScore;
 
+    public Result(Long contestId, Long uid, Integer totalScore) {
+        this.contestId = contestId;
+        this.uid = uid;
+        this.totalScore = totalScore;
+    }
 }
 

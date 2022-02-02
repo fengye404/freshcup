@@ -1,7 +1,10 @@
 package sast.freshcup.service;
 
+import org.apache.poi.ss.usermodel.Workbook;
 import sast.freshcup.entity.Contest;
 
+import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -17,14 +20,18 @@ public interface SuperContestService {
 
     void deleteContest(Long id);
 
-    void problemSort(Long id, Integer orderId);
+    void problemSort(List<Long> problemIds, Long contestId);
 
     void answerUpload();
+
+    void resetContest(Long id);
 
     Contest getContestById(Long id);
 
     Map<String, Object> getAllContest(Integer pageNum, Integer pageSize);
 
     Map<String, Object> getAllProblem(Long contestId, Integer pageNum, Integer pageSize);
+
+    Workbook exportResult(Long contestId) throws IOException;
 
 }

@@ -1,14 +1,16 @@
 package sast.freshcup.controller;
 
+import org.apache.poi.ss.usermodel.Workbook;
 import org.springframework.web.bind.annotation.*;
-import sast.freshcup.annotation.AuthHandle;
 import sast.freshcup.annotation.OperateLog;
-import sast.freshcup.common.enums.AuthEnum;
 import sast.freshcup.entity.Contest;
 import sast.freshcup.service.SuperContestService;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.util.HashMap;
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -18,7 +20,7 @@ import java.util.Map;
  **/
 @RestController
 @RequestMapping("superadmin/contest")
-@AuthHandle(AuthEnum.ADMIN)
+//@AuthHandle(AuthEnum.SUPER_ADMIN)
 public class SuperContestController {
 
     private final SuperContestService superContestService;
@@ -63,22 +65,25 @@ public class SuperContestController {
 
     @OperateLog(operDesc = "题目排序")
     @PostMapping("sort")
-    public String problemSort(@RequestBody HashMap<String, Object> request) {
-
+    public String problemSort(@RequestBody Map<String, Object> json) {
+        superContestService.problemSort(
+                (List<Long>) json.get("problemIds"),
+                Long.parseLong(json.get("contestId").toString())
+        );
         return "success";
     }
 
     @OperateLog(operDesc = "结束比赛，同步redis缓存")
-    @PostMapping("sort")
+    @PostMapping("finish")
     public String finishProblem() {
         superContestService.answerUpload();
         return "success";
     }
 
-    @OperateLog(operDesc = "删除比赛所有学生、管理员账号")
-    @PostMapping("destroy")
+    @OperateLog(operDesc = "重置比赛账号")
+    @PostMapping("reset")
     public String destroyContest(Long contestId) {
-
+        superContestService.resetContest(contestId);
         return "success";
     }
 
@@ -90,11 +95,19 @@ public class SuperContestController {
         return superContestService.getAllProblem(contestId, pageNum, pageSize);
     }
 
-    @OperateLog(operDesc = "导出比赛结果")
+    //    @OperateLog(operDesc = "导出比赛结果")
     @PostMapping("result")
-    public String exportResult(@RequestParam(name = "contestId") Long contestId) {
+    public void exportResult(@RequestParam(name = "contestId") Long contestId,
+                             HttpServletResponse response) {
 
-        return "success";
+        String fileName = "成绩名单_" + LocalDateTime.now() + ".xlsx";
+        Workbook wb = null;
+        try {
+            wb = superContestService.exportResult(contestId);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        SuperAdminController.outputExcel(response, fileName, wb);
     }
 
 }

@@ -28,15 +28,21 @@ public enum ErrorEnum {
 
     EXPIRED_LOGIN(5009, "登录过期"),
 
-    ANSWER_JUDGE(6000,"题目已批改"),
+    ANSWER_JUDGE(6000, "题目已批改"),
 
-    PROBLEM_NOT_EXIST(6001,"题目不存在"),
+    PROBLEM_NOT_EXIST(6001, "题目不存在"),
 
-    NO_PROBLEM(7000,"没有对应题目"),
+    PROBLEM_EXIST(6002, "题号重复"),
 
-    NO_CONTEST(8000,"没有比赛"),
+    NO_PROBLEM(7000, "没有对应题目"),
 
-    DATE_ERROR(8001,"时间设置错误");
+    NO_CONTEST(8000, "没有比赛"),
+
+    DATE_ERROR(8001, "时间设置错误"),
+
+    CONTEST_INCONSISTENCY(8002, "比赛不一致"),
+
+    EXPORT_ERROR(8003, "导出错误");
 
     private Integer errCode;
     private String errMsg;
